@@ -1,0 +1,7 @@
+[jobs.pascel_lex]
+
+image = { source = "dockerfile", path = ".", tag = "lexical-anlayser" }
+
+run = [
+  "./lexical-analyser $input",
+]
