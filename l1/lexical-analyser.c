@@ -6,17 +6,27 @@
 #include <stdlib.h>
 
 void double_token ();
-void cat_token (ch);
+void cat_token (char);
 void clear_token ();
+int getsym ();
+bool reserver ();
 
+enum symbol
+{
+  IDENT, NUMBER, KEYWORD, OPERATION, ERR
+};
+
+enum symbol symbol;
+int ch;
 char *token;
 int token_capacity;
 int token_length;
 int main (int argc, char *argv[])
 {
-  char *token = (char *) malloc (1005 * sizeof (char) + 5);
-  int token_length = 0;
-  int token_capacity = 1000;
+  *token = (char *) malloc (1005 * sizeof (char) + 5);
+  token_length = 0;
+  token_capacity = 1000;
+  /* IO redirection */
   if (argc > 1)
   {
     int fd = open (argv[argc - 1], O_RDONLY);
@@ -24,27 +34,41 @@ int main (int argc, char *argv[])
       return -1;
     dup2 (fd, 0);
   }
-  int ch;
-  while (1)
+  // ungetc (ch, stdin);
+  /* input and output */
+  while (1) 
   {
     ch = getchar ();
-    if (ch == EOF)
-      break;
-    if (ch == '' || ch == ' ' || ch == '\t' || ch == '\n')
-      continue;
-    if (isdigit (ch))
-    {
-      cat_token (ch);
-      while (1)
-      {
-        ch = getchar ();
-        if ()
-      }
-    }
+    getsym ();
   }
    
 
   return 0;
+}
+
+int getsym()
+{
+  clear_token ();
+  while (ch == ' ' || ch == '\n' || ch == '\t')
+    ch = getchar ();
+  if (ch == EOF)
+  {
+    return 0;
+  }
+  if (isalpha (ch))
+  {
+    while (isalpha (ch) || isdigit (ch))
+    {
+      cat_token (ch);
+      ch = getchar ();_
+    }
+    ugetc (ch, stdin);
+    if (reserver ())
+      symbol = KEYWORD;
+    else
+      symbol = IDENT;
+    return;
+  }
 }
 
 void double_token ()
@@ -64,4 +88,9 @@ void cat_token (char ch)
 void clear_token ()
 {
   token_length = 0;
+}
+
+void reserver ()
+{
+  
 }
