@@ -11,6 +11,7 @@ void clear_token ();
 void getsym ();
 int reserver_keyword ();
 int reserver_op ();
+int reserver_op2 ();
 void error ();
 
 int keyword_count = 6;
@@ -19,7 +20,7 @@ char *KEYWORDS[] = {
 };
 char *KEYWORDS_O[] = {
   "If", "Else", "While", "Break", "Continue", "Return"
-}
+};
 
 int operation_count = 12;
 char *OPERATIONS[] = {
@@ -28,7 +29,7 @@ char *OPERATIONS[] = {
 char *OPERATIONS_O[] = {
   "Assign", "Semicolon", "LPar", "RPar", "LBrace", "RBrace", "Plus", "Mult",
   "Div", "Lt", "Gt", "Eq"
-}
+};
 
 enum symbol
 {
@@ -63,15 +64,16 @@ int main (int argc, char *argv[])
     switch (symbol)
     {
       case IDENT:
-        printf ("Idenx(%s)\n", token);
+        printf ("Ident(%s)\n", token);
         break;
       case NUMBER:
         printf ("Number(%s)\n", token);
         break;
       case KEYWORD:
-
+        printf ("%s\n", KEYWORDS_O[reserver_keyword ()]);
+        break;
       case OPERATION:
-        printf ("%s\n", token);
+        printf ("%s\n", OPERATIONS_O[reserver_op2 ()]);
         break;
     }
     
@@ -119,7 +121,7 @@ void getsym()
   }
   /* operation */
   int index;
-  if ((index != reserver_op ()))
+  if ((index = reserver_op ()) != -1)
   {
     cat_token (ch);
     symbol = OPERATION;
@@ -168,6 +170,14 @@ int reserver_op ()
 {
   for (int i = 0; i < operation_count; i++)
     if (ch == OPERATIONS[i][0])
+      return i;
+  return -1;
+}
+
+int reserver_op2 ()
+{
+  for (int i = 0; i < operation_count; i++)
+    if (!strcmp (OPERATIONS[i], token))
       return i;
   return -1;
 }
