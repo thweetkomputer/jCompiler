@@ -23,7 +23,7 @@ char *OPERATION[] = {
 
 enum symbol
 {
-  IDENT, NUMBER, KEYWORD, OPERATION, ERR
+  IDENT, NUMBER, KEYWORD, OPERATION, ERR, UNDERLINE
 };
 
 enum symbol symbol;
@@ -98,7 +98,13 @@ int getsym()
     return;
   }
   /* operation */
-
+  /* underline */
+  if (ch == '_')
+  {
+    cat_token (ch);
+    symbol = UNDERLINE;
+    return;
+  }
 }
 
 void double_token ()
