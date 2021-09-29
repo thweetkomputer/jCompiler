@@ -9,7 +9,17 @@ void double_token ();
 void cat_token (char);
 void clear_token ();
 int getsym ();
-bool reserver ();
+int reserver ();
+
+int keyword_count = 6;
+char *KEYWORD[] = {
+ "if", "else", "while", "break", "continue", "return" 
+};
+
+int operation_count = 12;
+char *OPERATION[] = {
+  "=", ";", "(", ")", "{", "}", "+", "*", "/", "<", ">", "=="
+};
 
 enum symbol
 {
@@ -36,10 +46,15 @@ int main (int argc, char *argv[])
   }
   // ungetc (ch, stdin);
   /* input and output */
-  while (1) 
+  while ((ch = getchar ()) != EOF) 
   {
-    ch = getchar ();
     getsym ();
+    switch (symbol)
+    {
+      case IDENT:
+        
+    }
+    
   }
    
 
@@ -55,20 +70,35 @@ int getsym()
   {
     return 0;
   }
+  /* ident or keyword */
   if (isalpha (ch))
   {
     while (isalpha (ch) || isdigit (ch))
     {
       cat_token (ch);
-      ch = getchar ();_
+      ch = getchar ();
     }
     ugetc (ch, stdin);
-    if (reserver ())
+    if (reserver () != -1)
       symbol = KEYWORD;
     else
       symbol = IDENT;
     return;
   }
+  /* number */
+  if (isdigit (ch))
+  {
+    while (isdigit (ch))
+    {
+      cat_token (ch);
+      ch = getchar ();
+    }
+    ugetc (ch, stdin);
+    symbol = NUMBER;
+    return;
+  }
+  /* operation */
+
 }
 
 void double_token ()
@@ -83,14 +113,19 @@ void cat_token (char ch)
   if (token_length == token_capacity)
     double_token ();
   token[token_length++] = ch;
+  token[token_length] = '\0';
 }
 
 void clear_token ()
 {
   token_length = 0;
+  token[token_length] = '\0';
 }
 
-void reserver ()
+int reserver_keyword ()
 {
-  
+  for (int i = 0; i < keyword_count; i++)
+    if (!strcmp (KEYWORD[i], token))
+      return i;
+  return -1;
 }
