@@ -126,7 +126,7 @@ void getsym()
     cat_token (ch);
     symbol = OPERATION;
     char next = getchar ();
-    if (next == '=')
+    if (ch == '=' && next == '=')
     {
       cat_token (next);
       return;
