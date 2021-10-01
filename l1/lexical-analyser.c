@@ -185,5 +185,5 @@ int reserver_op2 ()
 void error ()
 {
   printf ("ERR\n");
-  exit (1);
+  exit (0);
 }
