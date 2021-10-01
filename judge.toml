@@ -1,4 +1,4 @@
-[jobs.pascel_lex]
+[jobs.lexer]
 
 image = { source = "dockerfile", path = ".", tag = "lexical-anlayser" }
 
