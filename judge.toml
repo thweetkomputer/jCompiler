@@ -3,5 +3,5 @@
 image = { source = "dockerfile", path = ".", tag = "test-submit" }
 
 run = [
-  "./test $input",
+  "./test < $input",
 ]
