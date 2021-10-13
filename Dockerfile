@@ -1,4 +1,4 @@
 FROM gcc:9
-WORKDIR /l1/
-RUN gcc lexical-analyser.c -o lexical-analyser
-RUN chmod +x lexical-analyser
+COPY test.c .
+RUN gcc test.c -o test
+RUN chmod +x test

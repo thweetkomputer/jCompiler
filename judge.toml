@@ -1,7 +1,7 @@
-[jobs.pascel_lex]
+[jobs.test_submit]
 
-image = { source = "dockerfile", path = ".", tag = "lexical-anlayser" }
+image = { source = "dockerfile", path = ".", tag = "test-submit" }
 
 run = [
-  "./lexical-analyser $input",
+  "./test $input",
 ]
