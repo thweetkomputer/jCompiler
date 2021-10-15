@@ -3,5 +3,5 @@
 image = { source = "dockerfile", path = ".", tag = "lab1" }
 
 run = [
-  "./lab1 < $input ",
+  "./lab1 < $input > $ir",
 ]

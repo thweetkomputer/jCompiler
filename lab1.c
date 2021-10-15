@@ -68,7 +68,7 @@ int main (int argc, char *argv[])
   parse_comp_unit (fp); 
   getsym ();
   if (symbol != EOFF)
-    {error ();}
+    error ();
   printf ("define %s %s @%s(){\n\t%s\n}", fp->func_type, fp->return_type, fp->name, fp->content);
    
 
@@ -149,7 +149,7 @@ void getsym()
           _getchar ();
         }
         if (ch == '9') 
-          {error ();}
+          error ();
         ungetc (ch, stdin);
         long long ans = 0;
         char *sp = token;
@@ -158,7 +158,7 @@ void getsym()
           sp++;
         }
         if (ans >= 2147483647ll)
-          {error ();}
+          error ();
         number = (int) ans;
         return;
       }
@@ -196,7 +196,7 @@ void getsym()
           sp++;
         }
         if (ans >= 2147483647ll)
-          {error ();}
+          error ();
         number = (int) ans;
         return;
       }
@@ -218,7 +218,7 @@ void getsym()
       sp++;
     }
     if (ans >= 2147483647ll)
-      {error ();}
+      error ();
     ungetc (ch, stdin);
     number = (int) ans;
     return;
@@ -235,7 +235,7 @@ void parse_comp_unit (struct function * func)
 void parse_func_def (struct function * func)
 {
   if (symbol != FUNC_TYPE)
-    {error ();}
+    error ();
   func->func_type = "dso_local";
   if (!strcmp (token, "int"))
     func->return_type = "i32";
@@ -243,15 +243,15 @@ void parse_func_def (struct function * func)
     func->return_type = "void";
   getsym ();
   if (symbol != IDENT)
-    {error ();}
+    error ();
   func->name = (char *) malloc (strlen (token) + 1);
   strcpy (func->name, token);
   getsym ();
   if (strcmp (token, "("))
-    {error ();}
+    error ();
   getsym ();
   if (strcmp (token, ")"))
-    {error ();}
+    error ();
   getsym ();
   parse_block (&(func->content));
 }
@@ -259,18 +259,18 @@ void parse_func_def (struct function * func)
 void parse_block (char **content) 
 {
   if (strcmp (token, "{"))
-    {error ();}
+    error ();
   getsym ();
   parse_stmt (content);
   getsym ();
   if (strcmp (token, "}"))
-    {error ();}
+    error ();
 }
 
 void parse_stmt (char **content)
 {
   if (symbol != RETURN)
-    {error ();}
+    error ();
   *content = (char *)malloc(sizeof(char) * 100);
   (*content)[0] = '\0';
   strcpy (*content, "ret i32 ");
@@ -279,14 +279,14 @@ void parse_stmt (char **content)
   sprintf (*content + strlen (*content), "%d", number);
   getsym ();
   if (strcmp (token, ";"))
-    {error ();}
+    error ();
 }
 
 void parse_number ()
 {
   if (symbol == DECIMAL_CONST || symbol == HEXADECIMAL_CONST || symbol == OCTAL_CONST)
     return;
-  {error ();}
+  error ();
 }
 
 
