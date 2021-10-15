@@ -79,7 +79,7 @@ void getsym()
 {
   clear_token ();
   _getchar ();
-  while (ch == ' ' || ch == '\n' || ch == '\t')
+  while (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
     _getchar ();
   if (ch == EOF)
   {
@@ -248,10 +248,16 @@ void parse_func_def (struct function * func)
   strcpy (func->name, token);
   getsym ();
   if (strcmp (token, "("))
+  {
+    printf ("(-token(%s)\n", token);
     error ();
+  }
   getsym ();
   if (strcmp (token, ")"))
+  {
+    printf (")-token(%s)\n", token);
     error ();
+  }
   getsym ();
   parse_block (&(func->content));
 }
