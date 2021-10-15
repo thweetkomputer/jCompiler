@@ -1,7 +1,7 @@
-int main(
+int asdfsdfasdvdafsf(
 
     )
 {
-  return 123;
+  return 1/*23*/23;
 }
-123
+// 123

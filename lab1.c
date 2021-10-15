@@ -18,6 +18,7 @@ enum symbol
   IF, ELSE, WHILE, BREAK, CONTINUE, RETURN
 };
 
+int flag;
 int number;
 enum symbol symbol;
 int ch;
@@ -82,7 +83,6 @@ void getsym()
     _getchar ();
   if (ch == EOF)
   {
-    printf ("EOF");
     symbol = EOFF;
     return;
   }
@@ -353,4 +353,56 @@ void error ()
 void _getchar ()
 {
   ch = getchar ();
+  if (ch == '/')
+  {
+    int next_ch = getchar ();
+    if (next_ch == '/')
+    {
+      while (1)
+      {
+        next_ch = getchar ();
+        if (next_ch == EOF)
+        {
+          ch = EOF;
+          return;
+        }
+        if (next_ch == '\n')
+        {
+          ch = getchar ();
+          return;
+        }
+      }
+    }
+    else if (next_ch == '*')
+    {
+      while (1)
+      {
+        next_ch = getchar ();
+        if (next_ch == EOF)
+        {
+          ch = EOF;
+          return;
+        }
+        if (next_ch == '*')
+        {
+          char nnext_ch = getchar ();
+          if (nnext_ch == EOF)
+          {
+            ch = EOF;
+            return;
+          }
+          if (nnext_ch == '/')
+          {
+            ch = getchar ();
+            return;
+          }
+          ungetc (nnext_ch, stdin);
+        }
+      }
+    }
+    else
+    {
+      ungetc (next_ch, stdin);
+    }
+  }
 }
