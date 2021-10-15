@@ -260,7 +260,7 @@ void parse_block (char **content)
 {
   if (strcmp (token, "{"))
   {
-    printf ("token(%s)\n", token);
+    printf ("{-token(%s)\n", token);
     error ();
   
   }
@@ -268,7 +268,10 @@ void parse_block (char **content)
   parse_stmt (content);
   getsym ();
   if (strcmp (token, "}"))
+  {
+    printf ("}-token(%s)\n", token);
     error ();
+  }
 }
 
 void parse_stmt (char **content)
@@ -358,6 +361,7 @@ void error ()
 void _getchar ()
 {
   ch = getchar ();
+  putchar (ch);
   if (ch == '/')
   {
     int next_ch = getchar ();
