@@ -353,6 +353,7 @@ void error ()
 void _getchar ()
 {
   ch = getchar ();
+  putchar (ch);
   if (ch == '/')
   {
     int next_ch = getchar ();
