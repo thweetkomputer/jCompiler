@@ -248,16 +248,10 @@ void parse_func_def (struct function * func)
   strcpy (func->name, token);
   getsym ();
   if (strcmp (token, "("))
-  {
-    printf ("(-token(%s)\n", token);
     error ();
-  }
   getsym ();
   if (strcmp (token, ")"))
-  {
-    printf (")-token(%s)\n", token);
     error ();
-  }
   getsym ();
   parse_block (&(func->content));
 }
@@ -265,19 +259,12 @@ void parse_func_def (struct function * func)
 void parse_block (char **content) 
 {
   if (strcmp (token, "{"))
-  {
-    printf ("{-token(%s)\n", token);
     error ();
-  
-  }
   getsym ();
   parse_stmt (content);
   getsym ();
   if (strcmp (token, "}"))
-  {
-    printf ("}-token(%s)\n", token);
     error ();
-  }
 }
 
 void parse_stmt (char **content)
@@ -360,14 +347,12 @@ void clear_token ()
 
 void error ()
 {
-  printf ("\nexit\n");
-  // exit (-1);
+  exit (-1);
 }
 
 void _getchar ()
 {
   ch = getchar ();
-  putchar (ch);
   if (ch == '/')
   {
     int next_ch = getchar ();
