@@ -347,7 +347,9 @@ void clear_token ()
 
 void error ()
 {
-  exit (-1);
+  printf ("\nexit\n");
+  // exit (-1);
+  
 }
 
 void _getchar ()
