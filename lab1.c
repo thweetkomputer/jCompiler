@@ -259,7 +259,11 @@ void parse_func_def (struct function * func)
 void parse_block (char **content) 
 {
   if (strcmp (token, "{"))
+  {
+    printf ("token(%s)\n", token);
     error ();
+  
+  }
   getsym ();
   parse_stmt (content);
   getsym ();
@@ -347,7 +351,8 @@ void clear_token ()
 
 void error ()
 {
-  exit (-1);
+  printf ("\nexit\n");
+  // exit (-1);
 }
 
 void _getchar ()
