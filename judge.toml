@@ -1,7 +1,7 @@
 [jobs.lexer]
 
-image = { source = "dockerfile", path = ".", tag = "lexical-anlayser" }
+image = { source = "dockerfile", path = ".", tag = "lab1" }
 
 run = [
-  "./lexical-analyser $input",
+  "./lab1 < $input",
 ]
