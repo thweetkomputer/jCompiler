@@ -1,0 +1,83 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BREAK	lab1.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN$/;"	e	enum:symbol	file:
+CONST	lab1.c	/^  CONST,$/;"	e	enum:symbol	file:
+CONTINUE	lab1.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN$/;"	e	enum:symbol	file:
+DECIMAL_CONST	lab1.c	/^  DECIMAL_CONST,$/;"	e	enum:symbol	file:
+ELSE	lab1.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN$/;"	e	enum:symbol	file:
+EOFF	lab1.c	/^  EOFF,$/;"	e	enum:symbol	file:
+ERR	lexical-analyser.c	/^  IDENT, NUMBER, KEYWORD, OPERATION, ERR, UNDERLINE$/;"	e	enum:symbol	file:
+FUNC_TYPE	lab1.c	/^  FUNC_TYPE, \/* int, void *\/$/;"	e	enum:symbol	file:
+HEXADECIMAL_CONST	lab1.c	/^  HEXADECIMAL_CONST,$/;"	e	enum:symbol	file:
+IDENT	lab1.c	/^  IDENT,$/;"	e	enum:symbol	file:
+IDENT	lexical-analyser.c	/^  IDENT, NUMBER, KEYWORD, OPERATION, ERR, UNDERLINE$/;"	e	enum:symbol	file:
+IF	lab1.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN$/;"	e	enum:symbol	file:
+KEYWORD	lexical-analyser.c	/^  IDENT, NUMBER, KEYWORD, OPERATION, ERR, UNDERLINE$/;"	e	enum:symbol	file:
+KEYWORDS	lexical-analyser.c	/^char *KEYWORDS[] = {$/;"	v
+KEYWORDS_O	lexical-analyser.c	/^char *KEYWORDS_O[] = {$/;"	v
+MARK	lab1.c	/^  MARK, \/* [ ] ( ) { } ; ... *\/$/;"	e	enum:symbol	file:
+NUMBER	lexical-analyser.c	/^  IDENT, NUMBER, KEYWORD, OPERATION, ERR, UNDERLINE$/;"	e	enum:symbol	file:
+OCTAL_CONST	lab1.c	/^  OCTAL_CONST,$/;"	e	enum:symbol	file:
+OPERATION	lexical-analyser.c	/^  IDENT, NUMBER, KEYWORD, OPERATION, ERR, UNDERLINE$/;"	e	enum:symbol	file:
+OPERATIONS	lexical-analyser.c	/^char *OPERATIONS[] = {$/;"	v
+OPERATIONS_O	lexical-analyser.c	/^char *OPERATIONS_O[] = {$/;"	v
+RETURN	lab1.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN$/;"	e	enum:symbol	file:
+UNDERLINE	lexical-analyser.c	/^  IDENT, NUMBER, KEYWORD, OPERATION, ERR, UNDERLINE$/;"	e	enum:symbol	file:
+WHILE	lab1.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN$/;"	e	enum:symbol	file:
+_getchar	lab1.c	/^void _getchar ()$/;"	f
+cat_token	lab1.c	/^void cat_token (char ch)$/;"	f
+cat_token	lexical-analyser.c	/^void cat_token (char ch)$/;"	f
+ch	lab1.c	/^int ch;$/;"	v
+ch	lexical-analyser.c	/^int ch;$/;"	v
+clear_token	lab1.c	/^void clear_token ()$/;"	f
+clear_token	lexical-analyser.c	/^void clear_token ()$/;"	f
+content	lab1.c	/^  char *content;$/;"	m	struct:function	file:
+double_token	lab1.c	/^void double_token ()$/;"	f
+double_token	lexical-analyser.c	/^void double_token ()$/;"	f
+error	lab1.c	/^void error ()$/;"	f
+error	lexical-analyser.c	/^void error ()$/;"	f
+func_type	lab1.c	/^  char *func_type;$/;"	m	struct:function	file:
+function	lab1.c	/^struct function$/;"	s	file:
+getsym	lab1.c	/^void getsym()$/;"	f
+getsym	lexical-analyser.c	/^void getsym()$/;"	f
+is_hexadecimal_digit	lexical.c	/^int is_hexadecimal_digit (char ch)$/;"	f
+is_nondigit	lexical.c	/^int is_nondigit (char ch)$/;"	f
+is_nonzero_digit	lexical.c	/^int is_nonzero_digit (char ch)$/;"	f
+is_octal_digit	lexical.c	/^int is_octal_digit (char ch)$/;"	f
+keyword_count	lexical-analyser.c	/^int keyword_count = 6;$/;"	v
+main	lab1.c	/^int main (int argc, char *argv[])$/;"	f
+main	lexical-analyser.c	/^int main (int argc, char *argv[])$/;"	f
+main	test/main.c	/^int main()$/;"	f
+name	lab1.c	/^  char *name;$/;"	m	struct:function	file:
+number	lab1.c	/^int number;$/;"	v
+operation_count	lexical-analyser.c	/^int operation_count = 12;$/;"	v
+parse_block	lab1.c	/^void parse_block (char *content) $/;"	f
+parse_break	lab1.c	/^int parse_break ()$/;"	f
+parse_comp_unit	lab1.c	/^void parse_comp_unit (struct function * func)$/;"	f
+parse_continue	lab1.c	/^int parse_continue ()$/;"	f
+parse_else	lab1.c	/^int parse_else ()$/;"	f
+parse_func_def	lab1.c	/^void parse_func_def (struct function * func)$/;"	f
+parse_func_type	lab1.c	/^int parse_func_type ()$/;"	f
+parse_if	lab1.c	/^int parse_if ()$/;"	f
+parse_number	lab1.c	/^void parse_number ()$/;"	f
+parse_return	lab1.c	/^int parse_return ()$/;"	f
+parse_stmt	lab1.c	/^void parse_stmt (char *content)$/;"	f
+parse_while	lab1.c	/^int parse_while ()$/;"	f
+reserver_keyword	lexical-analyser.c	/^int reserver_keyword ()$/;"	f
+reserver_op	lexical-analyser.c	/^int reserver_op ()$/;"	f
+reserver_op2	lexical-analyser.c	/^int reserver_op2 ()$/;"	f
+return_type	lab1.c	/^  char *return_type;$/;"	m	struct:function	file:
+symbol	lab1.c	/^enum symbol symbol;$/;"	v	typeref:enum:symbol
+symbol	lab1.c	/^enum symbol$/;"	g	file:
+symbol	lexical-analyser.c	/^enum symbol symbol;$/;"	v	typeref:enum:symbol
+symbol	lexical-analyser.c	/^enum symbol$/;"	g	file:
+token	lab1.c	/^char *token;$/;"	v
+token	lexical-analyser.c	/^char *token;$/;"	v
+token_capacity	lab1.c	/^int token_capacity;$/;"	v
+token_capacity	lexical-analyser.c	/^int token_capacity;$/;"	v
+token_length	lab1.c	/^int token_length;$/;"	v
+token_length	lexical-analyser.c	/^int token_length;$/;"	v
