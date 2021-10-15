@@ -1,5 +1,5 @@
 #include <ctype.h>
-bool is_nonzero_digit (char);
-bool is_octal_digit (char);
-bool is_hexadecimal-digit (char);
-bool is_nondigit (char);
+int is_nonzero_digit (char);
+int is_octal_digit (char);
+int is_hexadecimal_digit (char);
+int is_nondigit (char);
