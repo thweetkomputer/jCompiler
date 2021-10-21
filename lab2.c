@@ -69,7 +69,6 @@ int main (int argc, char *argv[])
   getsym ();
   if (symbol != EOFF)
     error ();
-  printf ("define %s %s @%s(){\n\t%s\n}", fp->func_type, fp->return_type, fp->name, fp->content);
    
 
   return 0;
