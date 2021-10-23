@@ -1,7 +1,7 @@
-[jobs.lab1]
+[jobs.lab2]
 
-image = { source = "dockerfile", path = ".", tag = "lab1" }
+image = { source = "dockerfile", path = ".", tag = "lab2" }
 
 run = [
-  "./lab1 < $input > $ir",
+  "./lab2 < $input > $ir",
 ]

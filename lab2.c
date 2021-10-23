@@ -15,7 +15,8 @@ enum symbol
   OCTAL_CONST,
   HEXADECIMAL_CONST,
   CONST,
-  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN
+  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,
+  UNARY_OP
 };
 
 int flag;
@@ -49,20 +50,27 @@ int parse_while ();
 int parse_continue ();
 int parse_return ();
 
-void parse_number ();
 void parse_stmt (char **);
 void parse_block (char **);
 void parse_func_def (struct function * func);
 void parse_comp_unit (struct function * func);
+void parse_number ();
+int parse_exp ();
+int parse_add_exp ();
+int parse_mul_exp ();
+int parse_unary_exp ();
+int parse_primary_exp ();
+
+void stack_add_char(char);
+void stack_add_int(int);
+
+struct on stack[100];
+int sp;
 int main (int argc, char *argv[])
 {
   token = (char *) malloc (1005 * sizeof (char) + 5);
   token_length = 0;
   token_capacity = 1000;
-  // int fd = open (argv[argc - 1], O_RDONLY);
-  // dup2 (fd, 0);
-
-  /* input and output */
   getsym ();
   struct function *fp = (struct function *) malloc (sizeof (struct function));
   parse_comp_unit (fp); 
@@ -70,6 +78,12 @@ int main (int argc, char *argv[])
   if (symbol != EOFF)
     error ();
    
+  for (int i = 0; i < sp; i++) {
+    if (stack[i].is_num) 
+      printf("%d", stack[i].val.n);
+    else
+      putchar(stack[i].val.c);
+  }
 
   return 0;
 }
@@ -80,51 +94,41 @@ void getsym()
   _getchar ();
   while (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
     _getchar ();
-  if (ch == EOF)
-  {
+  if (ch == EOF) {
     symbol = EOFF;
     return;
   }
-  if (isalpha (ch))
-  {
-    while (isalpha (ch) || isdigit (ch))
-    {
+  if (isalpha (ch)) {
+    while (isalpha (ch) || isdigit (ch)) {
       cat_token (ch);
       _getchar ();
     }
     ungetc (ch, stdin);
-    if (parse_func_type () != -1)
-    {
+    if (parse_func_type () != -1) {
       symbol = FUNC_TYPE;
       return;
     }
-    if (!parse_if ())
-    {
+    if (!parse_if ()) {
       symbol = IF;
       return;
     }
-    if (!parse_else ())
-    {
+    if (!parse_else ()) {
       symbol = ELSE;
       return;
     }
-    if (!parse_while ())
-    {
+    if (!parse_while ()) {
       symbol = WHILE;
       return;
     }
-    if (!parse_break ())
-    {
+    if (!parse_break ()) {
       symbol = BREAK;
       return;
     }
-    if (!parse_continue ())
-    {
+    if (!parse_continue ()) {
       symbol = CONTINUE;
       return;
     }
-    if (!parse_return ())
-    {
+    if (!parse_return ()) {
       symbol = RETURN;
       return;
     }
@@ -132,18 +136,15 @@ void getsym()
     return;
   }
   /* number */
-  if (isdigit (ch))
-  {
-    if (ch == '0')
-    {
+  if (isdigit (ch)) {
+    if (ch == '0') {
       cat_token (ch);
       _getchar ();
       if (is_octal_digit (ch)) {
         cat_token (ch);
         symbol = OCTAL_CONST;
         _getchar ();
-        while (is_octal_digit (ch)) 
-        {
+        while (is_octal_digit (ch)) {
           cat_token (ch);
           _getchar ();
         }
@@ -161,29 +162,25 @@ void getsym()
         number = (int) ans;
         return;
       }
-      if (ch == 'x' || ch == 'X')
-      {
+      if (ch == 'x' || ch == 'X') {
         cat_token (ch);
         symbol = HEXADECIMAL_CONST;
         char next_ch = getchar ();
-        if (!is_hexadecimal_digit (next_ch)) 
-        {
+        if (!is_hexadecimal_digit (next_ch)) {
           ungetc (ch, stdin);
           ungetc (next_ch, stdin);
           symbol = DECIMAL_CONST;
           return;
         }
         ch = next_ch;
-        while (is_hexadecimal_digit (ch))
-        {
+        while (is_hexadecimal_digit (ch)) {
           cat_token (ch);
           _getchar ();
         }
         ungetc (ch, stdin);
         long long ans = 0;
         char *sp = token + 2;
-        while (*sp)
-        {
+        while (*sp) {
           ans *= 16;
           char c = *sp;
           if (isdigit (c))
@@ -204,15 +201,13 @@ void getsym()
       return;
     }
     symbol = DECIMAL_CONST;
-    while (isdigit (ch))
-    {
+    while (isdigit (ch)) {
       cat_token (ch);
       _getchar ();
     }
     char *sp = token;
     long long ans = 0;
-    while (*sp)
-    {
+    while (*sp) {
       ans = ans * 10 + *sp - '0';
       sp++;
     }
@@ -220,6 +215,11 @@ void getsym()
       error ();
     ungetc (ch, stdin);
     number = (int) ans;
+    return;
+  }
+  if (is_unary_op(ch)) {
+    symbol = UNARY_OP;
+    cat_token(ch);
     return;
   }
   symbol = MARK;
@@ -274,11 +274,12 @@ void parse_stmt (char **content)
   (*content)[0] = '\0';
   strcpy (*content, "ret i32 ");
   getsym ();
-  parse_number ();
+  int exp_val;
+  parse_exp ();
   sprintf (*content + strlen (*content), "%d", number);
   getsym ();
   if (strcmp (token, ";"))
-    error ();
+    error();
 }
 
 void parse_number ()
@@ -352,6 +353,7 @@ void error ()
 void _getchar ()
 {
   ch = getchar ();
+  putchar(ch);
   if (ch == '/')
   {
     int next_ch = getchar ();
@@ -372,26 +374,20 @@ void _getchar ()
         }
       }
     }
-    else if (next_ch == '*')
-    {
-      while (1)
-      {
+    else if (next_ch == '*') {
+      while (1) {
         next_ch = getchar ();
-        if (next_ch == EOF)
-        {
+        if (next_ch == EOF) {
           ch = EOF;
           return;
         }
-        if (next_ch == '*')
-        {
+        if (next_ch == '*') {
           char nnext_ch = getchar ();
-          if (nnext_ch == EOF)
-          {
+          if (nnext_ch == EOF) {
             ch = EOF;
             return;
           }
-          if (nnext_ch == '/')
-          {
+          if (nnext_ch == '/') {
             ch = getchar ();
             return;
           }
@@ -399,9 +395,72 @@ void _getchar ()
         }
       }
     }
-    else
-    {
+    else {
       ungetc (next_ch, stdin);
     }
   }
+}
+
+int
+parse_exp() {
+  return parse_add_exp();
+}
+
+int
+parse_add_exp()
+{
+  return parse_mul_exp();
+}
+
+int
+parse_mul_exp()
+{
+  return parse_unary_exp();
+}
+
+int
+parse_unary_exp()
+{
+  if (symbol == UNARY_OP) {
+    stack_add_char(token[0]);
+    getsym();
+    parse_unary_exp();
+  } else {
+    parse_primary_exp();
+  }
+  return 0;
+}
+
+int
+parse_primary_exp()
+{
+  if (!strcmp(token, "(")) {
+    stack_add_char('(');
+    getsym();
+    parse_exp();
+    getsym();
+    if (strcmp(token, ")"))
+      error();
+    stack_add_char(')');
+  } else {
+    parse_number();
+    stack_add_int(number);
+  }
+  return 0;
+
+}
+
+void 
+stack_add_char(char c)
+{
+  stack[sp].is_num = 0;
+  stack[sp].val.c = c;
+  sp++;
+}
+void 
+stack_add_int(int i)
+{
+  stack[sp].is_num = 1;
+  stack[sp].val.n = i;
+  sp++;
 }
