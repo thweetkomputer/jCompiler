@@ -4,6 +4,7 @@ int is_octal_digit (char);
 int is_hexadecimal_digit (char);
 int is_nondigit (char);
 int is_unary_op (char);
+int is_empty(char);
 
 struct on
 {

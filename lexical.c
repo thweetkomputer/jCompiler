@@ -1,4 +1,5 @@
 #include "lexical.h"
+
 int is_nonzero_digit (char ch)
 {
   return isdigit (ch) && ch != '0';
@@ -22,4 +23,9 @@ int is_nondigit (char ch)
 int is_unary_op(char ch)
 {
   return ch == '+' || ch == '-';
+}
+
+int is_empty(char ch)
+{
+  return ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r';
 }

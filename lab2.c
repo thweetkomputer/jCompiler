@@ -41,7 +41,7 @@ void cat_token (char);
 void clear_token ();
 void getsym ();
 
-void error ();
+void error (char *);
 int parse_func_type ();
 int parse_break ();
 int parse_if ();
@@ -76,7 +76,7 @@ int main (int argc, char *argv[])
   parse_comp_unit (fp); 
   getsym ();
   if (symbol != EOFF)
-    error ();
+    error(NULL);
    
   for (int i = 0; i < sp; i++) {
     if (stack[i].is_num) 
@@ -92,7 +92,7 @@ void getsym()
 {
   clear_token ();
   _getchar ();
-  while (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
+  while (is_empty(ch))
     _getchar ();
   if (ch == EOF) {
     symbol = EOFF;
@@ -149,7 +149,7 @@ void getsym()
           _getchar ();
         }
         if (ch == '9') 
-          error ();
+          error(NULL);
         ungetc (ch, stdin);
         long long ans = 0;
         char *sp = token;
@@ -158,7 +158,7 @@ void getsym()
           sp++;
         }
         if (ans >= 2147483647ll)
-          error ();
+          error(NULL);
         number = (int) ans;
         return;
       }
@@ -192,7 +192,7 @@ void getsym()
           sp++;
         }
         if (ans >= 2147483647ll)
-          error ();
+          error(NULL);
         number = (int) ans;
         return;
       }
@@ -212,7 +212,7 @@ void getsym()
       sp++;
     }
     if (ans >= 2147483647ll)
-      error ();
+      error(NULL);
     ungetc (ch, stdin);
     number = (int) ans;
     return;
@@ -234,7 +234,7 @@ void parse_comp_unit (struct function * func)
 void parse_func_def (struct function * func)
 {
   if (symbol != FUNC_TYPE)
-    error ();
+    error(NULL);
   func->func_type = "dso_local";
   if (!strcmp (token, "int"))
     func->return_type = "i32";
@@ -242,15 +242,15 @@ void parse_func_def (struct function * func)
     func->return_type = "void";
   getsym ();
   if (symbol != IDENT)
-    error ();
+    error(NULL);
   func->name = (char *) malloc (strlen (token) + 1);
   strcpy (func->name, token);
   getsym ();
   if (strcmp (token, "("))
-    error ();
+    error(NULL);
   getsym ();
   if (strcmp (token, ")"))
-    error ();
+    error(NULL);
   getsym ();
   parse_block (&(func->content));
 }
@@ -258,18 +258,18 @@ void parse_func_def (struct function * func)
 void parse_block (char **content) 
 {
   if (strcmp (token, "{"))
-    error ();
+    error("{");
   getsym ();
   parse_stmt (content);
   getsym ();
   if (strcmp (token, "}"))
-    error ();
+    error("}");
 }
 
 void parse_stmt (char **content)
 {
   if (symbol != RETURN)
-    error ();
+    error("return");
   *content = (char *)malloc(sizeof(char) * 100);
   (*content)[0] = '\0';
   strcpy (*content, "ret i32 ");
@@ -279,14 +279,14 @@ void parse_stmt (char **content)
   sprintf (*content + strlen (*content), "%d", number);
   getsym ();
   if (strcmp (token, ";"))
-    error();
+    error(";");
 }
 
 void parse_number ()
 {
   if (symbol == DECIMAL_CONST || symbol == HEXADECIMAL_CONST || symbol == OCTAL_CONST)
     return;
-  error ();
+  error("NUMBER");
 }
 
 
@@ -345,8 +345,9 @@ void clear_token ()
   token[token_length] = '\0';
 }
 
-void error ()
+void error (char *s)
 {
+  if (s) printf("\nexpect:%s\n", s);
   exit (-1);
 }
 
@@ -409,13 +410,53 @@ parse_exp() {
 int
 parse_add_exp()
 {
-  return parse_mul_exp();
+  parse_mul_exp();
+  while (1) {
+    int _c = getchar();
+    while (is_empty(_c)) {
+      printf("\nget %c\n", _c);
+      _c = getchar();
+    }
+    if (_c == EOF) {
+      ungetc(_c, stdin);
+      return 0;
+    }
+    putchar(_c);
+    if (is_unary_op(_c)) {
+      stack_add_char(_c);
+      getsym();
+      printf("mul");
+      parse_mul_exp();
+    } else { 
+      ungetc(_c, stdin);
+      break;
+    } 
+  } 
+  return 0;
 }
 
 int
 parse_mul_exp()
 {
-  return parse_unary_exp();
+  parse_unary_exp();
+  while (1) {
+    int _c = getchar();
+    while (is_empty(_c)) 
+      _c = getchar();
+    if (_c == EOF) {
+      ungetc(_c, stdin);
+      return 0;
+    }
+    if (_c == '*' || _c == '/' || _c == '%') {
+      stack_add_char(_c);
+      getsym();
+      parse_unary_exp();
+    } else {
+      ungetc(_c, stdin);
+      break;
+    }
+  }
+  return 0;
 }
 
 int
@@ -437,10 +478,11 @@ parse_primary_exp()
   if (!strcmp(token, "(")) {
     stack_add_char('(');
     getsym();
+    printf("!");
     parse_exp();
     getsym();
     if (strcmp(token, ")"))
-      error();
+      error(")");
     stack_add_char(')');
   } else {
     parse_number();
