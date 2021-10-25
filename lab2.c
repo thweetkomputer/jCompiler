@@ -85,6 +85,8 @@ int main (int argc, char *argv[])
       putchar(stack[i].val.c);
   }
   */
+  // char l1[100] = {};
+  // sprintf (l1, "define %s %s @%s(){\n", fp->func_type, fp->return_type, fp->name);
   char num_and_op[100] = {};
   for (int i = 0; i < sp; i++) {
     if (stack[i].is_num)
