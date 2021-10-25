@@ -85,8 +85,8 @@ int main (int argc, char *argv[])
       putchar(stack[i].val.c);
   }
   */
-  // char l1[100] = {};
-  // sprintf (l1, "define %s %s @%s(){\n", fp->func_type, fp->return_type, fp->name);
+  char l1[100] = {};
+  sprintf (l1, "define %s %s @%s(){\n", fp->func_type, fp->return_type, fp->name);
   char num_and_op[100] = {};
   for (int i = 0; i < sp; i++) {
     if (stack[i].is_num)
@@ -95,7 +95,9 @@ int main (int argc, char *argv[])
       sprintf(num_and_op + strlen(num_and_op), "%c", stack[i].val.c);
   }
   // printf("%s", num_and_op);
-  execl("python3", "cal.py", num_and_op, (char *)0);
+  int res = execlp("python3", "python3", "cal.py", l1, num_and_op, (char *)0);
+  // int res = execl("/bin/echo", "python3", "cal.py", num_and_op, (char *)0);
+  printf("res = %d\n", res);
 
   return 0;
 }

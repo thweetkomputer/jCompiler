@@ -1,4 +1,2 @@
 import sys
-print(eval(sys.argv[1].replace('/', '//')))
-# print(eval(sys.argv[1]))
-# print(sys.argv[1] + '\n\t' + eval(sys.argv[1].replace('/', '//')) + '\n}')
+print(sys.argv[1] + '\tret int32 ' + str(eval(sys.argv[2].replace('/', '//'))) + '\n}')
