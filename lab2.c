@@ -77,13 +77,13 @@ int main (int argc, char *argv[])
   getsym ();
   if (symbol != EOFF)
     error(NULL);
-   
   for (int i = 0; i < sp; i++) {
     if (stack[i].is_num) 
       printf("%d", stack[i].val.n);
     else
       putchar(stack[i].val.c);
   }
+
 
   return 0;
 }
