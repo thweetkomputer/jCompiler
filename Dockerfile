@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 FROM python:3.8
 FROM gcc:9
-COPY lab2.c lexical.c lexical.h dist ./
+COPY lab2.c lexical.c lexical.h cal.py ./
 RUN gcc -g lab2.c lexical.c -o lab2
 RUN chmod +x lab2
 
