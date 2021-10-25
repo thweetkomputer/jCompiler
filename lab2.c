@@ -77,13 +77,22 @@ int main (int argc, char *argv[])
   getsym ();
   if (symbol != EOFF)
     error(NULL);
+  /*
   for (int i = 0; i < sp; i++) {
     if (stack[i].is_num) 
       printf("%d", stack[i].val.n);
     else
       putchar(stack[i].val.c);
   }
-
+  */
+  char num_and_op[100] = {};
+  for (int i = 0; i < sp; i++) {
+    if (stack[i].is_num)
+      sprintf(num_and_op + strlen(num_and_op), "%d", stack[i].val.n);
+    else
+      sprintf(num_and_op + strlen(num_and_op), "%c", stack[i].val.c);
+  }
+  printf("%s", num_and_op);
 
   return 0;
 }
@@ -354,7 +363,6 @@ void error (char *s)
 void _getchar ()
 {
   ch = getchar ();
-  putchar(ch);
   if (ch == '/')
   {
     int next_ch = getchar ();
@@ -414,18 +422,15 @@ parse_add_exp()
   while (1) {
     int _c = getchar();
     while (is_empty(_c)) {
-      printf("\nget %c\n", _c);
       _c = getchar();
     }
     if (_c == EOF) {
       ungetc(_c, stdin);
       return 0;
     }
-    putchar(_c);
     if (is_unary_op(_c)) {
       stack_add_char(_c);
       getsym();
-      printf("mul");
       parse_mul_exp();
     } else { 
       ungetc(_c, stdin);
@@ -478,7 +483,6 @@ parse_primary_exp()
   if (!strcmp(token, "(")) {
     stack_add_char('(');
     getsym();
-    printf("!");
     parse_exp();
     getsym();
     if (strcmp(token, ")"))
