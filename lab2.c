@@ -93,7 +93,7 @@ int main (int argc, char *argv[])
       sprintf(num_and_op + strlen(num_and_op), "%c", stack[i].val.c);
   }
   // printf("%s", num_and_op);
-  execl("./dist/cal/cal", "cal", num_and_op, (char *)0);
+  execl("./cal/cal", "cal", num_and_op, (char *)0);
 
   return 0;
 }
