@@ -59,15 +59,22 @@ int parse_exp ();
 int parse_add_exp ();
 int parse_mul_exp ();
 int parse_unary_exp ();
-int parse_primary_exp ();
+int parse_primary_exp();
+
+
+int op_cmp(struct on s1, struct on s2);
+int print_num_and_op();
 
 void stack_add_char(char);
 void stack_add_int(int);
 
 struct on stack[100];
-int sp;
+int sp = 1;
+int vn;
 int main (int argc, char *argv[])
 {
+  stack[0].is_num = 0;
+  stack[0].val.c = '#';
   token = (char *) malloc (1005 * sizeof (char) + 5);
   token_length = 0;
   token_capacity = 1000;
@@ -85,8 +92,9 @@ int main (int argc, char *argv[])
       putchar(stack[i].val.c);
   }
   */
+  stack_add_char('#');
   char l1[100] = {};
-  sprintf (l1, "define %s %s @%s(){\n", fp->func_type, fp->return_type, fp->name);
+  printf("define %s %s @%s(){", fp->func_type, fp->return_type, fp->name);
   char num_and_op[100] = {};
   for (int i = 0; i < sp; i++) {
     if (stack[i].is_num)
@@ -94,15 +102,132 @@ int main (int argc, char *argv[])
     else
       sprintf(num_and_op + strlen(num_and_op), "%c", stack[i].val.c);
   }
-  // printf("%s", num_and_op);
-  int res = execlp("python3", "python3", "cal.py", l1, num_and_op, (char *)0);
+
+  int res = print_num_and_op();
   // int res = execl("/bin/echo", "python3", "cal.py", num_and_op, (char *)0);
-  printf("res = %d\n", res);
+  printf("\tret i32 %%x%d\n}", res);
 
   return 0;
 }
 
-void getsym()
+int
+op_cmp(struct on s1, struct on s2)
+{
+  char ma[][9] = {
+    {-1, -1, -1, -1, -1, -1, 1, -1, 1},
+    {-1, -1, -1, -1, -1, -1, 1, -1, 1},
+    {1, 1, 1, 1, 1, -1, 1, -1, 1}, 
+    {1, 1, 1, 1, 1, -1, 1, -1, 1}, 
+    {1, 1, 1, 1, 1, -1, 1, -1, 1}, 
+    {-1, -1, -1, -1, -1, -1, 0, -1, 0},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1},
+    {-1, -1, -1, -1, -1, -1, -1, -1, -1}
+  };
+  char cm[] = {'+', '-', '*', '/', '%', '(', ')', 'i', '#'};
+  int i1, i2;
+  if (s1.is_num == 1) i1 = 7;
+  else {
+    for (i1 = 0; i1 < 9; i1++)
+      if (s1.val.c == cm[i1])
+        break;
+  }
+  if (s2.is_num) i2 = 7;
+  else {
+    for (i2 = 0; i2 < 9; i2++)
+      if (s2.val.c == cm[i2])
+        break;
+  }
+  return ma[i1][i2];
+}
+
+int
+print_num_and_op()
+{
+  int _sp = 0;
+  struct on _stack[100];
+  for (int i = 0; i < sp; i++) {
+    if (_sp == 0) {
+      _stack[_sp++] = stack[i];
+      printf("\n");
+      continue;
+    }
+    int rr = _sp-1;
+    for (; rr >= 0; rr--) {
+      if (_stack[rr].is_num != 2)
+        break;
+    }
+    int j = op_cmp(_stack[rr], stack[i]);
+    if (j > 0) {
+      struct on op = _stack[_sp-2];
+      struct on right = _stack[_sp-1];
+      if (right.is_num) {
+        struct on left;
+        if (op.is_num == 0 && (op.val.c == '(' || op.val.c == '#')) {
+          left.val.n = 0;
+          left.is_num = 1;
+          op.val.c = '+';
+          _sp--;
+        } else if (_sp >= 4 && _stack[_sp-3].is_num) {
+          left = _stack[_sp-3];
+          _sp -= 3;
+        } else {
+          left.is_num = 1;
+          left.val.n = 0;
+          _sp -= 2;
+        }
+        printf("\t%%x%d = ", vn);
+        switch (op.val.c) {
+          case '+':
+            printf("add");
+            break;
+          case '-':
+            printf("sub");
+            break;
+          case '*':
+            printf("mul");
+            break;
+          case '/':
+            printf("sdiv");
+            break;
+          case '%':
+            printf("srem");
+            break;
+        }
+        printf(" i32 %s%d, %s%d\n", left.is_num == 1 ? "":"\%x", left.val.n, right.is_num == 1 ? "":"\%x", right.val.n);
+        struct on r;
+        r.is_num = 2; r.val.n = vn++;
+        _stack[_sp++] = r;
+      }
+      i--;
+    } else if (j < 0) {
+        if (stack[i].is_num) {
+          stack[i].is_num = 2;
+          printf("\t%%x%d = add i32 0, %d\n", vn++, stack[i].val.n);
+          stack[i].val.n = vn-1;
+        }
+        _stack[_sp++] = stack[i];
+    } else {
+      _stack[_sp-2] = _stack[_sp-1];
+      _sp--;
+    }
+    /* 
+    for (int i = 0; i < _sp; i++) {
+      if (_stack[i].is_num == 1)
+        printf("%d ", _stack[i].val.n);
+      else if (_stack[i].is_num == 2)
+        printf("%%x%d ", _stack[i].val.n);
+      else
+        printf("%c ", _stack[i].val.c);
+    }
+      printf("\n");
+    */
+  }
+  return _stack[1].val.n;
+}
+
+void
+getsym()
 {
   clear_token ();
   _getchar ();

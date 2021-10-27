@@ -20,17 +20,19 @@ RETURN	lab2.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	fi
 UNARY_OP	lab2.c	/^  UNARY_OP$/;"	e	enum:symbol	file:
 WHILE	lab2.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	file:
 _getchar	lab2.c	/^void _getchar ()$/;"	f
+a	cal.py	/^a = eval(sys.argv[2].replace('\/', '\/\/'))$/;"	v
 c	lexical.h	/^  union {char c; int n;} val;$/;"	m	union:on::__anon1
 cat_token	lab2.c	/^void cat_token (char ch)$/;"	f
 ch	lab2.c	/^int ch;$/;"	v
 clear_token	lab2.c	/^void clear_token ()$/;"	f
 content	lab2.c	/^  char *content;$/;"	m	struct:function	file:
 double_token	lab2.c	/^void double_token ()$/;"	f
-error	lab2.c	/^void error ()$/;"	f
+error	lab2.c	/^void error (char *s)$/;"	f
 flag	lab2.c	/^int flag;$/;"	v
 func_type	lab2.c	/^  char *func_type;$/;"	m	struct:function	file:
 function	lab2.c	/^struct function$/;"	s	file:
-getsym	lab2.c	/^void getsym()$/;"	f
+getsym	lab2.c	/^getsym()$/;"	f
+is_empty	lexical.c	/^int is_empty(char ch)$/;"	f
 is_hexadecimal_digit	lexical.c	/^int is_hexadecimal_digit (char ch)$/;"	f
 is_nondigit	lexical.c	/^int is_nondigit (char ch)$/;"	f
 is_nonzero_digit	lexical.c	/^int is_nonzero_digit (char ch)$/;"	f
@@ -38,17 +40,19 @@ is_num	lexical.h	/^  int is_num;$/;"	m	struct:on
 is_octal_digit	lexical.c	/^int is_octal_digit (char ch)$/;"	f
 is_unary_op	lexical.c	/^int is_unary_op(char ch)$/;"	f
 main	lab2.c	/^int main (int argc, char *argv[])$/;"	f
+main	test.c	/^int main() {$/;"	f
 n	lexical.h	/^  union {char c; int n;} val;$/;"	m	union:on::__anon1
 name	lab2.c	/^  char *name;$/;"	m	struct:function	file:
 number	lab2.c	/^int number;$/;"	v
 on	lexical.h	/^struct on$/;"	s
+op_cmp	lab2.c	/^op_cmp(struct on s1, struct on s2)$/;"	f
 parse_add_exp	lab2.c	/^parse_add_exp()$/;"	f
 parse_block	lab2.c	/^void parse_block (char **content) $/;"	f
 parse_break	lab2.c	/^int parse_break ()$/;"	f
 parse_comp_unit	lab2.c	/^void parse_comp_unit (struct function * func)$/;"	f
 parse_continue	lab2.c	/^int parse_continue ()$/;"	f
 parse_else	lab2.c	/^int parse_else ()$/;"	f
-parse_exp	lab2.c	/^parse_exp()$/;"	f
+parse_exp	lab2.c	/^parse_exp() {$/;"	f
 parse_func_def	lab2.c	/^void parse_func_def (struct function * func)$/;"	f
 parse_func_type	lab2.c	/^int parse_func_type ()$/;"	f
 parse_if	lab2.c	/^int parse_if ()$/;"	f
@@ -59,6 +63,7 @@ parse_return	lab2.c	/^int parse_return ()$/;"	f
 parse_stmt	lab2.c	/^void parse_stmt (char **content)$/;"	f
 parse_unary_exp	lab2.c	/^parse_unary_exp()$/;"	f
 parse_while	lab2.c	/^int parse_while ()$/;"	f
+print_num_and_op	lab2.c	/^print_num_and_op()$/;"	f
 return_type	lab2.c	/^  char *return_type;$/;"	m	struct:function	file:
 sp	lab2.c	/^int sp;$/;"	v
 stack	lab2.c	/^struct on stack[100];$/;"	v	typeref:struct:on
@@ -70,3 +75,4 @@ token	lab2.c	/^char *token;$/;"	v
 token_capacity	lab2.c	/^int token_capacity;$/;"	v
 token_length	lab2.c	/^int token_length;$/;"	v
 val	lexical.h	/^  union {char c; int n;} val;$/;"	m	struct:on	typeref:union:on::__anon1
+vn	lab2.c	/^int vn;$/;"	v
