@@ -152,6 +152,10 @@ print_num_and_op()
       printf("\n");
       continue;
     }
+    if (_stack[_sp-1].is_num == 0 && stack[i].is_num == 0) {
+      _stack[_sp++] = stack[i];
+      continue;
+    }
     int rr = _sp-1;
     for (; rr >= 0; rr--) {
       if (_stack[rr].is_num != 2)
