@@ -73,6 +73,10 @@ int sp = 1;
 int vn;
 int main (int argc, char *argv[])
 {
+  int ccc;
+  while ((ccc = getchar())!=EOF)
+    putchar(ccc);
+  return 0;
   stack[0].is_num = 0;
   stack[0].val.c = '#';
   token = (char *) malloc (1005 * sizeof (char) + 5);
