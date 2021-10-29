@@ -16,7 +16,7 @@ enum symbol
   HEXADECIMAL_CONST,
   CONST,
   IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,
-  UNARY_OP
+  UNARY_OP, INT
 };
 
 int flag;
@@ -27,6 +27,13 @@ char *token;
 int token_capacity;
 int token_length;
 
+struct ventry
+{
+  char name[30];
+  int n;
+}vmap[1000];
+int vmapsp;
+
 struct function
 {
   char *func_type;
@@ -35,32 +42,51 @@ struct function
   char *content;
 };
 
-void _getchar ();
-void double_token ();
-void cat_token (char);
-void clear_token ();
-void getsym ();
+int getachar();
+void _getchar();
+void double_token();
+void cat_token(char);
+void clear_token();
+void getsym();
 
-void error (char *);
-int parse_func_type ();
-int parse_break ();
-int parse_if ();
-int parse_else ();
-int parse_while ();
-int parse_continue ();
-int parse_return ();
+void error(char *);
+int parse_func_type();
+int parse_break();
+int parse_if();
+int parse_else();
+int parse_while();
+int parse_continue();
+int parse_return();
 
-void parse_stmt (char **);
-void parse_block (char **);
+
+// void parse_stmt (char **);
+// void parse_block (char **);
 void parse_func_def (struct function * func);
 void parse_comp_unit (struct function * func);
-void parse_number ();
+int parse_number ();
 int parse_exp ();
+int parse_const_exp();
 int parse_add_exp ();
 int parse_mul_exp ();
 int parse_unary_exp ();
 int parse_primary_exp();
 
+int parse_const();
+int parse_decl();
+int parse_const_decl();
+int parse_val_decl();
+int parse_b_type();
+int parse_const_def();
+int parse_const_init_val();
+int parse_val_decl();
+int parse_val_def();
+
+int parse_init_val();
+
+int parse_block();
+int parse_block_item();
+
+int parse_l_val();
 
 int op_cmp(struct on s1, struct on s2);
 int print_num_and_op();
@@ -275,6 +301,10 @@ getsym()
       symbol = RETURN;
       return;
     }
+    if (!parse_const()) {
+      symbol = CONST;
+      return;
+    }
     symbol = IDENT;
     return;
   }
@@ -369,12 +399,176 @@ getsym()
   cat_token (ch);
 }
 
-void parse_comp_unit (struct function * func)
+int
+parse_block()
+{
+  if (strcmp(token, "{"))
+    error("parse_block->{");
+  char _c = getachar();
+  if (_c == EOF) {
+    ungetc(_c, stdin);
+    return 0;
+  }
+  if (_c == '}')
+    return 0;
+  ungetc(_c, stdin);
+  while (1)
+  {
+    getsym();
+    parse_block_item();
+    _c = getachar();
+    if (_c == EOF) 
+      error("parse_block->}");
+    if (_c == '}')
+      break;
+    ungetc(_c, stdin);
+  }
+  return 0;
+}
+
+int
+parse_block_item()
+{
+  if (!strcmp(token, "int") || !strcmp(token, "const"))
+    parse_decl();
+  else
+    parse_stmt();
+  return 0;
+}
+
+void
+parse_comp_unit (struct function * func)
 {
   parse_func_def (func);
 }
 
-void parse_func_def (struct function * func)
+int
+parse_decl()
+{
+  if (symbol == CONST)
+    parse_const_decl();
+  else
+    parse_val_decl();
+  return 0;
+}
+
+int
+parse_l_val()
+{
+  if (symbol != IDENT)
+    error("l_val->IDENT");
+  return 0;
+}
+
+int
+parse_const_decl()
+{
+  getsym();
+  parse_b_type();
+  getsym();
+  parse_const_def();
+  while (1) {
+    char _c = getachar();
+    if (_c == EOF) {
+      ungetc(_c, stdin);
+      return 0;
+    }
+    if (_c == ','){
+      getsym();
+      parse_const_def();
+    } else { break; }
+  }
+  getsym();
+  if (strcmp(token, ";")) {
+    error("ConstDecl->;");
+  }
+  return 0;
+}
+
+int
+parse_b_type()
+{
+  if (strcmp(token, "int"))
+    error("Btype->INT");
+  return 0;
+}
+
+int
+parse_const_def()
+{
+  if (symbol != IDENT) {
+    error("parse_const_def IDENT");
+  }
+  getsym();
+  if (strcmp(token, "=")) {
+    error("parse_const_def =");
+  }
+  getsym();
+  parse_const_init_val();
+  return 0;
+}
+
+int
+parse_const_init_val()
+{
+  parse_const_exp();
+  return 0;
+}
+
+int
+parse_const_exp()
+{
+  parse_add_exp();
+  return 0;
+}
+
+int
+parse_val_decl()
+{
+  if (strcmp(token, "int")) 
+    error("parse_val_decl->int");
+  getsym();
+  parse_val_def();
+  while (1) {
+    char _c = getachar();
+    if (_c == EOF) {
+      ungetc(_c, stdin);
+      return 0;
+    }
+    if (_c == ','){
+      getsym();
+      parse_val_def();
+    } else { break; }
+  }
+  getsym();
+  if (strcmp(token, ";")) {
+    error("ValDecl->;");
+  }
+  return 0;
+}
+
+int parse_val_def()
+{
+  if (symbol != IDENT)
+    error("parse_val_def->IDENT");
+  char _c = getachar();
+  if (_c != '=') {
+    ungetc(_c, stdin);
+    return 0;
+  }
+  getsym();
+  parse_init_val();
+  return 0;
+}
+
+int parse_init_val()
+{
+  parse_exp();
+  return 0;
+}
+
+void
+parse_func_def (struct function * func)
 {
   if (symbol != FUNC_TYPE)
     error(NULL);
@@ -425,11 +619,12 @@ void parse_stmt (char **content)
     error(";");
 }
 
-void parse_number ()
+int parse_number ()
 {
   if (symbol == DECIMAL_CONST || symbol == HEXADECIMAL_CONST || symbol == OCTAL_CONST)
-    return;
+    return 1;
   error("NUMBER");
+  return 0;
 }
 
 
@@ -464,6 +659,10 @@ int parse_continue ()
 int parse_return ()
 {
   return strcmp (token, "return");
+}
+int parse_const ()
+{
+  return strcmp (token, "const");
 }
 
 void double_token ()
@@ -622,9 +821,12 @@ parse_primary_exp()
     if (strcmp(token, ")"))
       error(")");
     stack_add_char(')');
-  } else {
-    parse_number();
+  } else if (parse_number()){
     stack_add_int(number);
+  } else if (symbol == IDENT) {
+    // TODO
+  } else {
+    error ("parse_primary_exp");
   }
   return 0;
 
@@ -643,4 +845,12 @@ stack_add_int(int i)
   stack[sp].is_num = 1;
   stack[sp].val.n = i;
   sp++;
+}
+
+int getachar()
+{
+  char _c = getchar();
+  while (is_empty(_c))
+    _c = getchar();
+  return _c;
 }

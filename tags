@@ -14,10 +14,11 @@ FUNC_TYPE	lab3.c	/^  FUNC_TYPE, \/* int, void *\/$/;"	e	enum:symbol	file:
 HEXADECIMAL_CONST	lab3.c	/^  HEXADECIMAL_CONST,$/;"	e	enum:symbol	file:
 IDENT	lab3.c	/^  IDENT,$/;"	e	enum:symbol	file:
 IF	lab3.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	file:
+INT	lab3.c	/^  UNARY_OP, INT$/;"	e	enum:symbol	file:
 MARK	lab3.c	/^  MARK, \/* [ ] ( ) { } ; ... *\/$/;"	e	enum:symbol	file:
 OCTAL_CONST	lab3.c	/^  OCTAL_CONST,$/;"	e	enum:symbol	file:
 RETURN	lab3.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	file:
-UNARY_OP	lab3.c	/^  UNARY_OP$/;"	e	enum:symbol	file:
+UNARY_OP	lab3.c	/^  UNARY_OP, INT$/;"	e	enum:symbol	file:
 WHILE	lab3.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	file:
 _getchar	lab3.c	/^void _getchar ()$/;"	f
 a	cal.py	/^a = eval(sys.argv[2].replace('\/', '\/\/'))$/;"	v
@@ -31,6 +32,7 @@ error	lab3.c	/^void error (char *s)$/;"	f
 flag	lab3.c	/^int flag;$/;"	v
 func_type	lab3.c	/^  char *func_type;$/;"	m	struct:function	file:
 function	lab3.c	/^struct function$/;"	s	file:
+getachar	lab3.c	/^int getachar()$/;"	f
 getsym	lab3.c	/^getsym()$/;"	f
 is_empty	lexical.c	/^int is_empty(char ch)$/;"	f
 is_hexadecimal_digit	lexical.c	/^int is_hexadecimal_digit (char ch)$/;"	f
@@ -47,21 +49,34 @@ number	lab3.c	/^int number;$/;"	v
 on	lexical.h	/^struct on$/;"	s
 op_cmp	lab3.c	/^op_cmp(struct on s1, struct on s2)$/;"	f
 parse_add_exp	lab3.c	/^parse_add_exp()$/;"	f
+parse_b_type	lab3.c	/^parse_b_type()$/;"	f
+parse_block	lab3.c	/^parse_block()$/;"	f
 parse_block	lab3.c	/^void parse_block (char **content) $/;"	f
+parse_block_item	lab3.c	/^parse_block_item()$/;"	f
 parse_break	lab3.c	/^int parse_break ()$/;"	f
-parse_comp_unit	lab3.c	/^void parse_comp_unit (struct function * func)$/;"	f
+parse_comp_unit	lab3.c	/^parse_comp_unit (struct function * func)$/;"	f
+parse_const	lab3.c	/^int parse_const ()$/;"	f
+parse_const_decl	lab3.c	/^parse_const_decl()$/;"	f
+parse_const_def	lab3.c	/^parse_const_def()$/;"	f
+parse_const_exp	lab3.c	/^parse_const_exp()$/;"	f
+parse_const_init_val	lab3.c	/^parse_const_init_val()$/;"	f
 parse_continue	lab3.c	/^int parse_continue ()$/;"	f
+parse_decl	lab3.c	/^parse_decl()$/;"	f
 parse_else	lab3.c	/^int parse_else ()$/;"	f
 parse_exp	lab3.c	/^parse_exp() {$/;"	f
-parse_func_def	lab3.c	/^void parse_func_def (struct function * func)$/;"	f
+parse_func_def	lab3.c	/^parse_func_def (struct function * func)$/;"	f
 parse_func_type	lab3.c	/^int parse_func_type ()$/;"	f
 parse_if	lab3.c	/^int parse_if ()$/;"	f
+parse_init_val	lab3.c	/^int parse_init_val()$/;"	f
+parse_l_val	lab3.c	/^parse_l_val()$/;"	f
 parse_mul_exp	lab3.c	/^parse_mul_exp()$/;"	f
 parse_number	lab3.c	/^void parse_number ()$/;"	f
 parse_primary_exp	lab3.c	/^parse_primary_exp()$/;"	f
 parse_return	lab3.c	/^int parse_return ()$/;"	f
 parse_stmt	lab3.c	/^void parse_stmt (char **content)$/;"	f
 parse_unary_exp	lab3.c	/^parse_unary_exp()$/;"	f
+parse_val_decl	lab3.c	/^parse_val_decl()$/;"	f
+parse_val_def	lab3.c	/^int parse_val_def()$/;"	f
 parse_while	lab3.c	/^int parse_while ()$/;"	f
 print_num_and_op	lab3.c	/^print_num_and_op()$/;"	f
 return_type	lab3.c	/^  char *return_type;$/;"	m	struct:function	file:
