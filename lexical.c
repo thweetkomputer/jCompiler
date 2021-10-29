@@ -17,7 +17,7 @@ int is_hexadecimal_digit (char ch)
 
 int is_nondigit (char ch)
 {
-  return isalpha (ch) && ch == '_';
+  return isalpha (ch) || ch == '_';
 }
 
 int is_unary_op(char ch)
