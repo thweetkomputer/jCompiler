@@ -4,57 +4,78 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-BREAK	lab3.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	file:
-CONST	lab3.c	/^  CONST,$/;"	e	enum:symbol	file:
-CONTINUE	lab3.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	file:
-DECIMAL_CONST	lab3.c	/^  DECIMAL_CONST,$/;"	e	enum:symbol	file:
-ELSE	lab3.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	file:
-EOFF	lab3.c	/^  EOFF,$/;"	e	enum:symbol	file:
-FUNC_TYPE	lab3.c	/^  FUNC_TYPE, \/* int, void *\/$/;"	e	enum:symbol	file:
-HEXADECIMAL_CONST	lab3.c	/^  HEXADECIMAL_CONST,$/;"	e	enum:symbol	file:
-IDENT	lab3.c	/^  IDENT,$/;"	e	enum:symbol	file:
-IF	lab3.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	file:
-INT	lab3.c	/^  UNARY_OP, INT$/;"	e	enum:symbol	file:
-MARK	lab3.c	/^  MARK, \/* [ ] ( ) { } ; ... *\/$/;"	e	enum:symbol	file:
-OCTAL_CONST	lab3.c	/^  OCTAL_CONST,$/;"	e	enum:symbol	file:
-RETURN	lab3.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	file:
-UNARY_OP	lab3.c	/^  UNARY_OP, INT$/;"	e	enum:symbol	file:
-WHILE	lab3.c	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol	file:
+BREAK	lexical.h	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol
+CONST	lexical.h	/^  CONST,$/;"	e	enum:symbol
+CONST_VAR	lexical.h	/^  CONST_VAR, VAR$/;"	e	enum:exp_symbol
+CONTINUE	lexical.h	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol
+DECIMAL_CONST	lexical.h	/^  DECIMAL_CONST,$/;"	e	enum:symbol
+ELSE	lexical.h	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol
+EOFF	lexical.h	/^  EOFF,$/;"	e	enum:symbol
+FUNC_TYPE	lexical.h	/^  FUNC_TYPE, \/* int, void *\/$/;"	e	enum:symbol
+HEXADECIMAL_CONST	lexical.h	/^  HEXADECIMAL_CONST,$/;"	e	enum:symbol
+IDENT	lexical.h	/^  IDENT,$/;"	e	enum:symbol
+IF	lexical.h	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol
+INT	lexical.h	/^  UNARY_OP, INT$/;"	e	enum:symbol
+MARK	lexical.h	/^  MARK, \/* [ ] ( ) { } ; ... *\/$/;"	e	enum:symbol
+OCTAL_CONST	lexical.h	/^  OCTAL_CONST,$/;"	e	enum:symbol
+RETURN	lexical.h	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol
+UNARY_OP	lexical.h	/^  UNARY_OP, INT$/;"	e	enum:symbol
+VAR	lexical.h	/^  CONST_VAR, VAR$/;"	e	enum:exp_symbol
+WHILE	lexical.h	/^  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,$/;"	e	enum:symbol
 _getchar	lab3.c	/^void _getchar ()$/;"	f
 a	cal.py	/^a = eval(sys.argv[2].replace('\/', '\/\/'))$/;"	v
-c	lexical.h	/^  union {char c; int n;} val;$/;"	m	union:on::__anon1
+add_bold_const_value	lab3.c	/^int add_bold_const_value(int i)$/;"	f
+add_const_name	lab3.c	/^void add_const_name()$/;"	f
+add_const_value	lab3.c	/^void add_const_value()$/;"	f
+add_var_name	lab3.c	/^void add_var_name()$/;"	f
+c	lexical.h	/^  union {char c; int n; char* name;} val;$/;"	m	union:on::__anon1
+cal_exp	lab3.c	/^cal_exp()$/;"	f
 cat_token	lab3.c	/^void cat_token (char ch)$/;"	f
 ch	lab3.c	/^int ch;$/;"	v
+cindex	lab3.c	/^  int cindex;$/;"	m	struct:entry	file:
+cindex	lexical.h	/^  int cindex;$/;"	m	struct:on
 clear_token	lab3.c	/^void clear_token ()$/;"	f
+cmap	lab3.c	/^}vmap[1000], cmap[1000];$/;"	v	typeref:struct:entry
+cmapsp	lab3.c	/^int vmapsp = 1, cmapsp = 1;$/;"	v
 content	lab3.c	/^  char *content;$/;"	m	struct:function	file:
+cvn	lab3.c	/^int vn = 1, cvn = 1;$/;"	v
 double_token	lab3.c	/^void double_token ()$/;"	f
+entry	lab3.c	/^struct entry$/;"	s	file:
 error	lab3.c	/^void error (char *s)$/;"	f
+exp_symbol	lab3.c	/^enum exp_symbol exp_symbol;$/;"	v	typeref:enum:exp_symbol
+exp_symbol	lexical.h	/^enum exp_symbol$/;"	g
 flag	lab3.c	/^int flag;$/;"	v
 func_type	lab3.c	/^  char *func_type;$/;"	m	struct:function	file:
 function	lab3.c	/^struct function$/;"	s	file:
-getachar	lab3.c	/^int getachar()$/;"	f
+get_const_index_by_value	lab3.c	/^get_const_index_by_value(int i)$/;"	f
+get_var_index	lab3.c	/^get_var_index(char *str)$/;"	f
+getachar	lab3.c	/^getachar()$/;"	f
 getsym	lab3.c	/^getsym()$/;"	f
+index	lab3.c	/^  int index;$/;"	m	struct:entry	file:
 is_empty	lexical.c	/^int is_empty(char ch)$/;"	f
 is_hexadecimal_digit	lexical.c	/^int is_hexadecimal_digit (char ch)$/;"	f
 is_nondigit	lexical.c	/^int is_nondigit (char ch)$/;"	f
 is_nonzero_digit	lexical.c	/^int is_nonzero_digit (char ch)$/;"	f
-is_num	lexical.h	/^  int is_num;$/;"	m	struct:on
+is_num	lexical.h	/^  int is_num;  \/*0 -> char, 1 -> num, 2 -> num or exp, 3 -> var with name *\/$/;"	m	struct:on
 is_octal_digit	lexical.c	/^int is_octal_digit (char ch)$/;"	f
 is_unary_op	lexical.c	/^int is_unary_op(char ch)$/;"	f
 main	lab3.c	/^int main (int argc, char *argv[])$/;"	f
 main	test.c	/^int main() {$/;"	f
-n	lexical.h	/^  union {char c; int n;} val;$/;"	m	union:on::__anon1
+n	lab3.c	/^  int n;$/;"	m	struct:entry	file:
+n	lexical.h	/^  union {char c; int n; char* name;} val;$/;"	m	union:on::__anon1
 name	lab3.c	/^  char *name;$/;"	m	struct:function	file:
+name	lab3.c	/^  char name[30];$/;"	m	struct:entry	file:
+name	lexical.h	/^  char name[30];$/;"	m	struct:on
+name	lexical.h	/^  union {char c; int n; char* name;} val;$/;"	m	union:on::__anon1
 number	lab3.c	/^int number;$/;"	v
 on	lexical.h	/^struct on$/;"	s
 op_cmp	lab3.c	/^op_cmp(struct on s1, struct on s2)$/;"	f
 parse_add_exp	lab3.c	/^parse_add_exp()$/;"	f
 parse_b_type	lab3.c	/^parse_b_type()$/;"	f
 parse_block	lab3.c	/^parse_block()$/;"	f
-parse_block	lab3.c	/^void parse_block (char **content) $/;"	f
 parse_block_item	lab3.c	/^parse_block_item()$/;"	f
 parse_break	lab3.c	/^int parse_break ()$/;"	f
-parse_comp_unit	lab3.c	/^parse_comp_unit (struct function * func)$/;"	f
+parse_comp_unit	lab3.c	/^parse_comp_unit ()$/;"	f
 parse_const	lab3.c	/^int parse_const ()$/;"	f
 parse_const_decl	lab3.c	/^parse_const_decl()$/;"	f
 parse_const_def	lab3.c	/^parse_const_def()$/;"	f
@@ -64,30 +85,38 @@ parse_continue	lab3.c	/^int parse_continue ()$/;"	f
 parse_decl	lab3.c	/^parse_decl()$/;"	f
 parse_else	lab3.c	/^int parse_else ()$/;"	f
 parse_exp	lab3.c	/^parse_exp() {$/;"	f
-parse_func_def	lab3.c	/^parse_func_def (struct function * func)$/;"	f
+parse_func_def	lab3.c	/^parse_func_def()$/;"	f
 parse_func_type	lab3.c	/^int parse_func_type ()$/;"	f
 parse_if	lab3.c	/^int parse_if ()$/;"	f
-parse_init_val	lab3.c	/^int parse_init_val()$/;"	f
+parse_init_val	lab3.c	/^parse_init_val()$/;"	f
 parse_l_val	lab3.c	/^parse_l_val()$/;"	f
 parse_mul_exp	lab3.c	/^parse_mul_exp()$/;"	f
-parse_number	lab3.c	/^void parse_number ()$/;"	f
+parse_number	lab3.c	/^int parse_number ()$/;"	f
 parse_primary_exp	lab3.c	/^parse_primary_exp()$/;"	f
 parse_return	lab3.c	/^int parse_return ()$/;"	f
-parse_stmt	lab3.c	/^void parse_stmt (char **content)$/;"	f
+parse_stmt	lab3.c	/^int parse_stmt (char **content)$/;"	f
 parse_unary_exp	lab3.c	/^parse_unary_exp()$/;"	f
-parse_val_decl	lab3.c	/^parse_val_decl()$/;"	f
-parse_val_def	lab3.c	/^int parse_val_def()$/;"	f
+parse_var_decl	lab3.c	/^parse_var_decl()$/;"	f
+parse_var_def	lab3.c	/^int parse_var_def()$/;"	f
 parse_while	lab3.c	/^int parse_while ()$/;"	f
+print_const	lab3.c	/^print_const()$/;"	f
 print_num_and_op	lab3.c	/^print_num_and_op()$/;"	f
+print_stack	lab3.c	/^print_stack()$/;"	f
+print_var	lab3.c	/^print_var()$/;"	f
 return_type	lab3.c	/^  char *return_type;$/;"	m	struct:function	file:
 sp	lab3.c	/^int sp = 1;$/;"	v
 stack	lab3.c	/^struct on stack[100];$/;"	v	typeref:struct:on
 stack_add_char	lab3.c	/^stack_add_char(char c)$/;"	f
 stack_add_int	lab3.c	/^stack_add_int(int i)$/;"	f
+stack_add_var	lab3.c	/^stack_add_var(char *str)$/;"	f
 symbol	lab3.c	/^enum symbol symbol;$/;"	v	typeref:enum:symbol
-symbol	lab3.c	/^enum symbol$/;"	g	file:
+symbol	lexical.h	/^enum symbol$/;"	g
 token	lab3.c	/^char *token;$/;"	v
 token_capacity	lab3.c	/^int token_capacity;$/;"	v
+token_is_const	lab3.c	/^token_is_const(char *str)$/;"	f
+token_is_var	lab3.c	/^token_is_var(char *str)$/;"	f
 token_length	lab3.c	/^int token_length;$/;"	v
-val	lexical.h	/^  union {char c; int n;} val;$/;"	m	struct:on	typeref:union:on::__anon1
-vn	lab3.c	/^int vn;$/;"	v
+val	lexical.h	/^  union {char c; int n; char* name;} val;$/;"	m	struct:on	typeref:union:on::__anon1
+vmap	lab3.c	/^}vmap[1000], cmap[1000];$/;"	v	typeref:struct:entry
+vmapsp	lab3.c	/^int vmapsp = 1, cmapsp = 1;$/;"	v
+vn	lab3.c	/^int vn = 1, cvn = 1;$/;"	v

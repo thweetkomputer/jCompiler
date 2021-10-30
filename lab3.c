@@ -1,38 +1,28 @@
 #include <stdio.h>
 #include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include "lexical.h"
-
-enum symbol
-{
-  EOFF,
-  IDENT,
-  FUNC_TYPE, /* int, void */
-  MARK, /* [ ] ( ) { } ; ... */
-  DECIMAL_CONST,
-  OCTAL_CONST,
-  HEXADECIMAL_CONST,
-  CONST,
-  IF, ELSE, WHILE, BREAK, CONTINUE, RETURN,
-  UNARY_OP, INT
-};
 
 int flag;
 int number;
 enum symbol symbol;
+enum exp_symbol exp_symbol;
 int ch;
 char *token;
 int token_capacity;
 int token_length;
 
-struct ventry
+int vn = 1, cvn = 1;
+struct entry
 {
   char name[30];
   int n;
-}vmap[1000];
-int vmapsp;
+  int index;
+  int cindex;
+}vmap[1000], cmap[1000];
+int vmapsp = 1, cmapsp = 1;
+int get_var_index(char*);
+int get_const_index_by_value(int);
 
 struct function
 {
@@ -41,6 +31,11 @@ struct function
   char *name;
   char *content;
 };
+
+void add_const_name();
+void add_const_value();
+int add_bold_const_value(int);
+void add_var_name();
 
 int getachar();
 void _getchar();
@@ -58,17 +53,20 @@ int parse_while();
 int parse_continue();
 int parse_return();
 
+void print_const();
+void print_stack();
+void print_var();
 
 // void parse_stmt (char **);
 // void parse_block (char **);
-int parse_func_def (struct function * func);
-int parse_comp_unit (struct function * func);
-int parse_number ();
-int parse_exp ();
+int parse_func_def();
+int parse_comp_unit();
+int parse_number();
+int parse_exp();
 int parse_const_exp();
-int parse_add_exp ();
-int parse_mul_exp ();
-int parse_unary_exp ();
+int parse_add_exp();
+int parse_mul_exp();
+int parse_unary_exp();
 int parse_primary_exp();
 
 int parse_const();
@@ -80,24 +78,28 @@ int parse_const_def();
 int parse_const_init_val();
 int parse_var_decl();
 int parse_var_def();
-int parse_stmt (char **content);
+int parse_stmt ();
 
 int parse_init_val();
 
 int parse_block();
-int parse_block_item(char**);
+int parse_block_item();
 
 int parse_l_val();
 
 int op_cmp(struct on s1, struct on s2);
 int print_num_and_op();
+int cal_exp();
 
 void stack_add_char(char);
 void stack_add_int(int);
+void stack_add_var();
+
+int token_is_const(char*);
+int token_is_var(char*);
 
 struct on stack[100];
 int sp = 1;
-int vn;
 int main (int argc, char *argv[])
 {
   stack[0].is_num = 0;
@@ -106,8 +108,7 @@ int main (int argc, char *argv[])
   token_length = 0;
   token_capacity = 1000;
   getsym ();
-  struct function *fp = (struct function *) malloc (sizeof (struct function));
-  parse_comp_unit (fp); 
+  parse_comp_unit (); 
   getsym ();
   if (symbol != EOFF)
     error(NULL);
@@ -119,9 +120,7 @@ int main (int argc, char *argv[])
       putchar(stack[i].val.c);
   }
   */
-  stack_add_char('#');
   char l1[100] = {};
-  printf("define %s %s @%s(){", fp->func_type, fp->return_type, fp->name);
   char num_and_op[100] = {};
   for (int i = 0; i < sp; i++) {
     if (stack[i].is_num)
@@ -129,10 +128,9 @@ int main (int argc, char *argv[])
     else
       sprintf(num_and_op + strlen(num_and_op), "%c", stack[i].val.c);
   }
+  print_const();
+  print_var();
 
-  int res = print_num_and_op();
-  // int res = execl("/bin/echo", "python3", "cal.py", num_and_op, (char *)0);
-  printf("\tret i32 %%x%d\n}", res);
 
   return 0;
 }
@@ -168,15 +166,45 @@ op_cmp(struct on s1, struct on s2)
   return ma[i1][i2];
 }
 
-int
-print_num_and_op()
+void
+print_stack()
 {
+#ifdef DEBUG
+  printf("\n---cal-begin---\nstack is:\n");
+  for (int i = 0; i < sp; i++) {
+    if (stack[i].is_num == 1)
+      printf("%d ", stack[i].val.n);
+    else if (stack[i].is_num == 2)
+      printf("%%%d ", stack[i].val.n);
+    else if (stack[i].is_num == 3)
+      printf("%s ", cmap[stack[i].val.n].name);
+    else
+      printf("%c ", stack[i].val.c);
+  }
+  printf("\n");
+#endif
+}
+
+int
+cal_exp()
+{
+  stack_add_char('#');
+  print_stack();
   int _sp = 0;
   struct on _stack[100];
   for (int i = 0; i < sp; i++) {
+  /*  for (int i = 0; i < _sp; i++) {
+    if (_stack[i].is_num == 1)
+      printf("%d ", _stack[i].val.n);
+    else if (_stack[i].is_num == 2)
+      printf("%%x%d ", _stack[i].val.n);
+    else
+      printf("%c ", _stack[i].val.c);
+  }
+  printf("\n");
+  */
     if (_sp == 0) {
       _stack[_sp++] = stack[i];
-      printf("\n");
       continue;
     }
     if (_stack[_sp-1].is_num == 0 && stack[i].is_num == 0) {
@@ -207,35 +235,34 @@ print_num_and_op()
           left.val.n = 0;
           _sp -= 2;
         }
-        printf("\t%%x%d = ", vn);
+        int _res = 0;
         switch (op.val.c) {
           case '+':
-            printf("add");
+            _res = left.val.n + right.val.n;
             break;
           case '-':
-            printf("sub");
+            _res = left.val.n - right.val.n;
             break;
           case '*':
-            printf("mul");
+            _res = left.val.n * right.val.n;
             break;
           case '/':
-            printf("sdiv");
+            _res = left.val.n / right.val.n;
             break;
           case '%':
-            printf("srem");
+            _res = left.val.n % right.val.n;
             break;
         }
-        printf(" i32 %s%d, %s%d\n", left.is_num == 1 ? "":"\%x", left.val.n, right.is_num == 1 ? "":"\%x", right.val.n);
         struct on r;
-        r.is_num = 2; r.val.n = vn++;
+        r.is_num = 2; r.val.n = _res;
         _stack[_sp++] = r;
       }
       i--;
     } else if (j < 0) {
         if (stack[i].is_num) {
           stack[i].is_num = 2;
-          printf("\t%%x%d = add i32 0, %d\n", vn++, stack[i].val.n);
-          stack[i].val.n = vn-1;
+          // printf("\t%%x%d = add i32 0, %d\n", vn++, stack[i].val.n);
+          // stack[i].val.n = vn-1;
         }
         _stack[_sp++] = stack[i];
     } else {
@@ -255,6 +282,112 @@ print_num_and_op()
     */
   }
   return _stack[1].val.n;
+}
+
+int
+print_num_and_op()
+{
+  stack_add_char('#');
+  print_stack();
+  int _sp = 0;
+  struct on _stack[100];
+  for (int i = 0; i < sp; i++) {
+    if (_sp == 0) {
+      _stack[_sp++] = stack[i];
+      continue;
+    }
+    if (_stack[_sp-1].is_num == 0 && stack[i].is_num == 0) {
+      _stack[_sp++] = stack[i];
+      continue;
+    }
+    int rr = _sp-1;
+    for (; rr >= 0; rr--) {
+      if (_stack[rr].is_num != 2)
+        break;
+    }
+    int j = op_cmp(_stack[rr], stack[i]);
+    if (j > 0) {
+      struct on op = _stack[_sp-2];
+      struct on right = _stack[_sp-1];
+      if (right.is_num) {
+        struct on left;
+        if (op.is_num == 0 && (op.val.c == '(' || op.val.c == '#')) {
+          left.val.n = 0;
+          left.is_num = 1;
+          op.val.c = '+';
+          _sp--;
+        } else if (_sp >= 4 && _stack[_sp-3].is_num) {
+          left = _stack[_sp-3];
+          _sp -= 3;
+        } else {
+          left.is_num = 1;
+          left.val.n = 0;
+          _sp -= 2;
+        }
+        printf("\t%%%d = ", cvn);
+        switch (op.val.c) {
+          case '+':
+            printf("add");
+            break;
+          case '-':
+            printf("sub");
+            break;
+          case '*':
+            printf("mul");
+            break;
+          case '/':
+            printf("sdiv");
+            break;
+          case '%':
+            printf("srem");
+            break;
+        }
+        printf(" i32 %s%d, %%%d\n", left.is_num!=1?"%":"", left.is_num!=1?left.cindex:0, right.cindex);
+        struct on r;
+        r.is_num = 2; r.cindex = cvn++; vn++;
+        _stack[_sp++] = r;
+      }
+      i--;
+    } else if (j < 0) {
+        if (stack[i].is_num == 1) {
+          stack[i].is_num = 2;
+          int _n = stack[i].val.n;
+//          int _index = add_bold_const_value(_n);
+          printf("\t%%%d = add i32 0, %d\n", cvn, _n);
+          stack[i].cindex = cvn++; vn++;
+        } else if (stack[i].is_num == 2) {
+          if (stack[i].val.n > 0) {
+            if (stack[i].cindex) 
+              printf("\t%%%d = add i32 0, %%%d\n", cvn, stack[i].cindex);
+            else
+              printf("\t%%%d = add i32 0, %d\n", cvn, cmap[stack[i].val.n].n);
+          } else {
+            printf("\t%%%d = load i32, i32* %%%d\n", cvn, stack[i].cindex);
+          }
+          stack[i].cindex = cvn;
+          cvn++;vn++;
+        }
+        _stack[_sp++] = stack[i];
+    } else {
+      _stack[_sp-2] = _stack[_sp-1];
+      _sp--;
+    }
+    /* 
+    for (int i = 0; i < _sp; i++) {
+      if (_stack[i].is_num == 1)
+        printf("%d ", _stack[i].val.n);
+      else if (_stack[i].is_num == 2)
+        printf("%%x%d ", _stack[i].val.n);
+      else
+        printf("%c ", _stack[i].val.c);
+    }
+      printf("\n");
+    */
+  }
+#ifdef DEBUG
+  printf("---return-%d---\n", _stack[1].cindex);
+#endif
+  return _stack[1].cindex;
 }
 
 void
@@ -371,6 +504,7 @@ getsym()
         return;
       }
       symbol = DECIMAL_CONST;
+      number = 0;
       ungetc (ch, stdin);
       return;
     }
@@ -401,46 +535,41 @@ getsym()
 }
 
 int
-parse_block(char **content)
+parse_block()
 {
   if (strcmp(token, "{"))
     error("parse_block->{");
-  char _c = getachar();
-  if (_c == EOF) {
-    ungetc(_c, stdin);
-    return 0;
-  }
-  if (_c == '}')
-    return 0;
-  ungetc(_c, stdin);
-  while (1)
-  {
-    getsym();
-    parse_block_item(content);
-    _c = getachar();
+  printf("{\n");
+  while (1) {
+    char _c = getachar();
     if (_c == EOF) 
-      error("parse_block->}");
-    if (_c == '}')
-      break;
+      error("block missing }");
+    if (_c == '}') {
+      printf("}\n");
+      return 0;
+    }
     ungetc(_c, stdin);
+    getsym();
+    parse_block_item();
   }
   return 0;
 }
 
 int
-parse_block_item(char ** content)
+parse_block_item()
 {
   if (!strcmp(token, "int") || !strcmp(token, "const"))
-    parse_decl(content);
+    parse_decl();
   else
-    parse_stmt(content);
+    parse_stmt();
   return 0;
 }
 
 int
-parse_comp_unit (struct function * func)
+parse_comp_unit ()
 {
-  parse_func_def (func);
+  printf("define ");
+  parse_func_def();
 }
 
 int
@@ -464,6 +593,7 @@ parse_l_val()
 int
 parse_const_decl()
 {
+  exp_symbol = CONST_VAR;
   getsym();
   parse_b_type();
   getsym();
@@ -497,25 +627,103 @@ parse_b_type()
   return 0;
 }
 
+void add_const_name()
+{
+  strcpy(cmap[cmapsp].name, token); 
+  cmap[cmapsp].index = vn;
+  printf("\t%%x%d = add i32 0, ", vn);
+}
+
+void add_const_value()
+{
+  cmap[cmapsp++].n = number;
+  printf("%d\n", number);
+  vn++;
+}
+
+void add_var_name()
+{
+  strcpy(vmap[vmapsp].name, token);
+  cmap[cmapsp].index = vn;
+  cmap[cmapsp].cindex = cvn;
+  printf("\t%%%d = alloca i32\n", cvn);
+  cvn++;
+  vmapsp++;
+}
+
+int add_bold_const_value(int i)
+{
+  cmap[cmapsp].n = i;
+  cmap[cmapsp].index = vn++;
+  cmapsp++;
+  return cmapsp-1;
+}
+
+int
+token_is_const(char *str)
+{
+  for (int i = 0; i < cmapsp; i++)
+    if (!strcmp(str, cmap[i].name))
+      return 1;
+  return 0;
+}
+
+int
+token_is_var(char *str)
+{
+  for (int i = 0; i < vmapsp; i++)
+    if (!strcmp(str, vmap[i].name))
+      return 1;
+  return 0;
+}
+
 int
 parse_const_def()
 {
   if (symbol != IDENT) {
     error("parse_const_def IDENT");
   }
+  add_const_name();
   getsym();
   if (strcmp(token, "=")) {
-    error("parse_const_def =");
+    error("const var undefined");
   }
   getsym();
   parse_const_init_val();
+  print_const();
   return 0;
+}
+
+void
+print_var()
+{
+#ifdef DEBUG
+  printf("====var====\n");
+  for (int i = 1; i < vmapsp; i++)
+    printf("%%%d: %s=%d\n", vmap[i].cindex, strlen(vmap[i].name) ? vmap[i].name : "NULL", vmap[i].n);
+  printf("===========\n\n");
+#endif
+}
+
+
+void
+print_const()
+{
+#ifdef DEBUG
+  printf("===const===\n");
+  for (int i = 1; i < cmapsp; i++)
+    printf("%%%d: %s=%d\n", cmap[i].cindex, strlen(cmap[i].name) ? cmap[i].name : "NULL", cmap[i].n);
+  printf("===========\n\n");
+#endif
 }
 
 int
 parse_const_init_val()
 {
+  sp = 1;
   parse_const_exp();
+  int number = cal_exp();
+  add_const_value();
   return 0;
 }
 
@@ -529,6 +737,7 @@ parse_const_exp()
 int
 parse_var_decl()
 {
+  exp_symbol = VAR;
   if (strcmp(token, "int")) 
     error("parse_val_decl->int");
   getsym();
@@ -558,59 +767,56 @@ int parse_var_def()
 {
   if (symbol != IDENT)
     error("parse_var_def->IDENT");
+  if (token_is_var(token) || token_is_const(token)) {
+    error("duplicate var");
+  }
+  int _vn = cvn;
+  add_var_name();
   char _c = getachar();
   if (_c != '=') {
     ungetc(_c, stdin);
     return 0;
   }
   getsym();
-  parse_init_val();
-  return 0;
-}
-
-int parse_init_val()
-{
-  parse_exp();
+  int _index = parse_init_val();
+  printf("\tstore %%%d, i32* %%%d\n", _index, _vn);
+  print_var();
   return 0;
 }
 
 int
-parse_func_def (struct function * func)
+parse_init_val()
+{
+  sp = 1;
+  parse_exp();
+  return print_num_and_op();
+}
+
+int
+parse_func_def()
 {
   if (symbol != FUNC_TYPE)
     error(NULL);
-  func->func_type = "dso_local";
+  printf("dso_local ");
   if (!strcmp (token, "int"))
-    func->return_type = "i32";
-  else
-    func->return_type = "void";
-  getsym ();
+    // func->return_type = "i32";
+    printf("i32 ");
+  getsym();
   if (symbol != IDENT)
     error(NULL);
-  func->name = (char *) malloc (strlen (token) + 1);
-  strcpy (func->name, token);
-  getsym ();
+  printf("@%s", token);
+  getsym();
   if (strcmp (token, "("))
     error(NULL);
-  getsym ();
+  printf("(");
+  getsym();
   if (strcmp (token, ")"))
     error(NULL);
-  getsym ();
-  parse_block (&(func->content));
-}
-/*
-int
-parse_block (char **content) 
-{
-  if (strcmp (token, "{"))
-    error("{");
-  getsym ();
-  parse_stmt (content);
-  getsym ();
-  if (strcmp (token, "}"))
-    error("}");
+  printf(")");
+  getsym();
+  parse_block();
   return 0;
-}*/
+}
 
 int parse_stmt (char **content)
 {
@@ -618,7 +824,10 @@ int parse_stmt (char **content)
     return 0;
   if (symbol == RETURN) {
     getsym();
+    sp = 1;
     parse_exp();
+    int _index = print_num_and_op();
+    printf("\tret i32 %%%d\n", _index);
     getsym();
     if (strcmp(";", token))
       error("stmt return;");
@@ -626,17 +835,25 @@ int parse_stmt (char **content)
   }
   char _c = getachar();
   if (_c == '=') {
+    if (token_is_const(token)) {
+      error("cannot modify const");
+    }
+    int _i = get_var_index(token);
+    if (!_i) {
+      printf("%s ", token);
+      error("not defined");
+    }
     getsym();
+    sp = 1;
     parse_exp();
+    int _index = print_num_and_op();
+    printf("\tstore i32 %%%d, i32* %%%d\n", _index, -_i);
   } else if (symbol == IDENT){
     ungetc(_c, stdin);
     parse_exp();
   } else {
     error("parse_stmt");
   }
-  // *content = (char *)malloc(sizeof(char) * 100);
-  // (*content)[0] = '\0';
-  // strcpy (*content, "ret i32 ");
   getsym ();
   if (strcmp (token, ";"))
     error(";");
@@ -719,7 +936,7 @@ void error (char *s)
 void _getchar ()
 {
   ch = getchar ();
-  putchar(ch);
+  // putchar(ch);
   if (ch == '/')
   {
     int next_ch = getchar ();
@@ -769,7 +986,8 @@ void _getchar ()
 
 int
 parse_exp() {
-  return parse_add_exp();
+  parse_add_exp();
+  return 0;
 }
 
 int
@@ -832,7 +1050,7 @@ parse_unary_exp()
 int
 parse_primary_exp()
 {
-  printf("\nstr=%s\n", token);
+  // printf("\nstr=%s\n", token);
   if (!strcmp(token, "(")) {
     stack_add_char('(');
     getsym();
@@ -844,7 +1062,7 @@ parse_primary_exp()
   } else if (symbol == DECIMAL_CONST || symbol == HEXADECIMAL_CONST || symbol == OCTAL_CONST ){
     stack_add_int(number);
   } else if (symbol == IDENT) {
-    // TODO
+    stack_add_var(token);
   } else {
     error ("parse_primary_exp");
   }
@@ -866,11 +1084,44 @@ stack_add_int(int i)
   stack[sp].val.n = i;
   sp++;
 }
-
-int getachar()
+void
+stack_add_var(char *str)
+{
+  print_const();
+  print_var();
+  stack[sp].is_num = 2;
+  int index = get_var_index(str);
+  if (!index)
+    error("var not found.");
+  stack[sp].val.n = index;
+  stack[sp].cindex = cmap[index].cindex;
+  sp++;
+}
+int
+get_var_index(char *str)
+{
+  for (int i = 0; i < cmapsp; i++) 
+    if (!strcmp(str, cmap[i].name))
+      return i;
+  for (int i = 0; i < vmapsp; i++)
+    if (!strcmp(str, vmap[i].name))
+      return -i;
+  return 0;
+}
+int
+getachar()
 {
   char _c = getchar();
   while (is_empty(_c))
     _c = getchar();
   return _c;
+}
+
+int
+get_const_index_by_value(int i)
+{
+  for (int i = 0; i < cmapsp; i++)
+    if (cmap[i].n == i)
+      return i;
+  return -1;
 }
