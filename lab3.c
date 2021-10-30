@@ -175,9 +175,7 @@ print_stack()
     if (stack[i].is_num == 1)
       printf("%d ", stack[i].val.n);
     else if (stack[i].is_num == 2)
-      printf("%%%d ", stack[i].val.n);
-    else if (stack[i].is_num == 3)
-      printf("%s ", cmap[stack[i].val.n].name);
+      printf("%%%d ", stack[i].cindex);
     else
       printf("%c ", stack[i].val.c);
   }
@@ -631,7 +629,6 @@ void add_const_name()
 {
   strcpy(cmap[cmapsp].name, token); 
   cmap[cmapsp].index = vn;
-  printf("\t%%x%d = add i32 0, ", vn);
 }
 
 void add_const_value()
@@ -644,9 +641,10 @@ void add_const_value()
 void add_var_name()
 {
   strcpy(vmap[vmapsp].name, token);
-  cmap[cmapsp].index = vn;
-  cmap[cmapsp].cindex = cvn;
+  vmap[vmapsp].index = vn;
+  vmap[vmapsp].cindex = cvn;
   printf("\t%%%d = alloca i32\n", cvn);
+  vn++;
   cvn++;
   vmapsp++;
 }
@@ -1094,7 +1092,8 @@ stack_add_var(char *str)
   if (!index)
     error("var not found.");
   stack[sp].val.n = index;
-  stack[sp].cindex = cmap[index].cindex;
+  if (index < 0)
+    stack[sp].cindex = vmap[-index].cindex;
   sp++;
 }
 int
