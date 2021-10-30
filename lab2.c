@@ -74,8 +74,11 @@ int vn;
 int main (int argc, char *argv[])
 {
   int ccc;
-  while ((ccc = getchar())!=EOF)
+  while ((ccc = getchar())!=EOF){
+    if (is_empty(ccc))
+      continue;
     putchar(ccc);
+  }
   return 0;
   stack[0].is_num = 0;
   stack[0].val.c = '#';
