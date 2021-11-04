@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="zccBaseListener">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/zccBaseListener.java" />
+      <root url="file://$PROJECT_DIR$/lib/zccParser.java" />
+      <root url="file://$PROJECT_DIR$/lib/zccListener.java" />
+      <root url="file://$PROJECT_DIR$/lib/zccLexer.java" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

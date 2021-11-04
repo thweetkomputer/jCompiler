@@ -1,0 +1,53 @@
+grammar Zcc;
+
+VOID: 'void';
+INT: 'int';
+RETURN: 'return';
+CONST: 'const';
+IDENT: [_a-zA-Z] [_a-zA-Z0-9]*;
+DECIMAL_CONST: [1-9] [0-9]*;
+OCTAL_CONST: '0' [1-7]*;
+HEXADECIMAL_CONST: ('0x' | '0X') [0-9a-zA-F]+;
+WHITE_SPACE: [ \t\r\n] -> skip;
+ADD: '+';
+SUB: '-';
+MUL: '*';
+DIV: '/';
+MOD: '%';
+LPAREN: '(';
+RPAREN: ')';
+LBRACE: '{';
+RBRACE: '}';
+LBRACK: '[';
+RBRACK: ']';
+
+COMMA: ',';
+SEMECOLON: ';';
+ASSIGN: '=';
+
+ident: IDENT;
+number: DECIMAL_CONST | OCTAL_CONST | HEXADECIMAL_CONST;
+compUnit: funcDef;
+decl: constDecl | varDecl;
+constDecl: CONST bType constDef ( COMMA constDef )* SEMECOLON;
+bType: INT;
+constDef: ident ASSIGN constInitVal;
+constInitVal: constExp;
+constExp: addExp;
+varDef: ident | ident ASSIGN initVal;
+varDecl: bType varDef ( COMMA varDef )* SEMECOLON;
+
+initVal: exp;
+funcDef: funcType ident LPAREN RPAREN block;
+funcType: INT;
+block: LBRACE blockItem* RBRACE;
+blockItem: decl | stmt;
+stmt: lVal ASSIGN exp SEMECOLON | exp? SEMECOLON | RETURN exp SEMECOLON;
+exp: addExp;
+lVal: ident;
+primaryExp: LPAREN exp RPAREN | lVal | number;
+addExp: mulExp ( (ADD | SUB) mulExp ) *;
+mulExp: unaryExp  ( (MUL | DIV | MOD) unaryExp ) *;
+unaryExp: primaryExp | ident LPAREN funcRParams? RPAREN | unaryOp unaryExp;
+unaryOp: ADD | SUB;
+funcRParams: exp ( COMMA exp )*;
