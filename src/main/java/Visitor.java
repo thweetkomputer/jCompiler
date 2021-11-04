@@ -1,8 +1,10 @@
 import antlr.ErrorHandler;
 import antlr.ZccBaseVisitor;
 import antlr.ZccParser;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -94,7 +96,6 @@ public class Visitor extends ZccBaseVisitor<Void> {
         constExpRes = 0;
         visit(ctx.constInitVal());
         constMap.put(name, constExpRes);
-        System.out.println(constMap);
         return null;
     }
 
@@ -114,17 +115,121 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     @Override
     public Void visitAddExp(ZccParser.AddExpContext ctx) {
-        int res = 0;
-        visit(ctx.mulExp(0));
-        for (int i = 1; i < ctx.children.size(); i += 2) {
-
+        if (calConstExp) {
+            int res;
+            visit(ctx.mulExp(0));
+            res = constExpRes;
+            for (int i = 0; i < ctx.unaryOp().size(); i++) {
+                visit(ctx.mulExp(i + 1));
+                if (ctx.unaryOp().get(i).ADD() != null) {
+                    res += constExpRes;
+                } else {
+                    res -= constExpRes;
+                }
+            }
+            constExpRes = res;
         }
-            return null;
+        return null;
+    }
+
+    @Override
+    public Void visitMulExp(ZccParser.MulExpContext ctx) {
+        if (calConstExp) {
+            int res;
+            visit(ctx.unaryExp(0));
+            res = constExpRes;
+            for (int i = 0; i < ctx.pUnayOp().size(); i++) {
+                visit(ctx.unaryExp(i + 1));
+                if (ctx.pUnayOp().get(i).MUL() != null) {
+                    res *= constExpRes;
+                } else if (ctx.pUnayOp().get(i).DIV() != null) {
+                    res /= constExpRes;
+                } else {
+                    res %= constExpRes;
+                }
+            }
+            constExpRes = res;
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitUnaryExp(ZccParser.UnaryExpContext ctx) {
+        if (calConstExp) {
+            if (ctx.ident() != null) {
+                ErrorHandler.err("cannot use function return value to define constant");
+            }
+            if (ctx.primaryExp() != null) {
+                visit(ctx.primaryExp());
+            } else if (ctx.unaryOp() != null) {
+                visit(ctx.unaryExp());
+                int res = constExpRes;
+                if (ctx.unaryOp().SUB() != null) {
+                    res = -res;
+                }
+                constExpRes = res;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitPrimaryExp(ZccParser.PrimaryExpContext ctx) {
+        if (calConstExp) {
+            if (ctx.lVal() != null) {
+                visit(ctx.lVal());
+            } else if (ctx.number() != null) {
+                visit(ctx.number());
+            } else if (ctx.children.size() == 3) {
+                visit(ctx.exp());
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitLVal(ZccParser.LValContext ctx) {
+        if (calConstExp) {
+            String name = ctx.ident().IDENT().toString();
+            if (findInVarMap(name)) {
+                ErrorHandler.err("cannot use variable to declare constant");
+            }
+            if (!findInConstMap(name)) {
+                ErrorHandler.err("cannot find constant %s", name);
+            }
+            constExpRes = constMap.get(name);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitNumber(ZccParser.NumberContext ctx) {
+        int val;
+        if (ctx.DECIMAL_CONST() != null) {
+            val = Integer.parseInt(ctx.DECIMAL_CONST().toString());
+        } else if (ctx.HEXADECIMAL_CONST() != null) {
+            val = 0;
+            String str = ctx.HEXADECIMAL_CONST().toString().toLowerCase();
+            for (int i = 2; i < str.length(); i++) {
+                val *= 16;
+                val += Character.isDigit(str.charAt(i)) ? str.charAt(i) - '0' : str.charAt(i) - 'a' + 10;
+            }
+        } else {
+            val = 0;
+            String str = ctx.OCTAL_CONST().toString();
+            for (int i = 2; i < str.length(); i++) {
+                val *= 8;
+                val += str.charAt(i) - '0';
+            }
+        }
+        if (calConstExp) {
+            constExpRes = val;
+        }
+        return null;
     }
 
     @Override
     public Void visitVarDecl(ZccParser.VarDeclContext ctx) {
-        int a;
         return null;
     }
 

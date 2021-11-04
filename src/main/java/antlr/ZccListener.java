@@ -247,6 +247,16 @@ public interface ZccListener extends ParseTreeListener {
 	 */
 	void exitUnaryOp(ZccParser.UnaryOpContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ZccParser#pUnayOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterPUnayOp(ZccParser.PUnayOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZccParser#pUnayOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitPUnayOp(ZccParser.PUnayOpContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ZccParser#funcRParams}.
 	 * @param ctx the parse tree
 	 */

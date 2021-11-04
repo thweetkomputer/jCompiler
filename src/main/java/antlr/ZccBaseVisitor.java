@@ -184,5 +184,12 @@ public class ZccBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Zc
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitPUnayOp(ZccParser.PUnayOpContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitFuncRParams(ZccParser.FuncRParamsContext ctx) { return visitChildren(ctx); }
 }

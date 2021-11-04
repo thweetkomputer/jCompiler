@@ -154,6 +154,12 @@ public interface ZccVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitUnaryOp(ZccParser.UnaryOpContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ZccParser#pUnayOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPUnayOp(ZccParser.PUnayOpContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ZccParser#funcRParams}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

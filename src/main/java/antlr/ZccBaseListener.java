@@ -303,6 +303,18 @@ public class ZccBaseListener implements ZccListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPUnayOp(ZccParser.PUnayOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPUnayOp(ZccParser.PUnayOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterFuncRParams(ZccParser.FuncRParamsContext ctx) { }
 	/**
 	 * {@inheritDoc}
