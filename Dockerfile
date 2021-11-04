@@ -1,4 +1,3 @@
-FROM gcc:9
-COPY test.c .
-RUN gcc test.c -o test
+FROM openjdk:8
+WORKDIR /src/
 RUN chmod +x test
