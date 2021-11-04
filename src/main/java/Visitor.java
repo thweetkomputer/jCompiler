@@ -9,11 +9,9 @@ import java.util.*;
  * @date 2021/11/4
  */
 public class Visitor extends ZccBaseVisitor<Void> {
-    boolean acc = true;
     int index = 1;
     int constExpRes;
     boolean calConstExp = false;
-    boolean declareVar = false;
     Map<String, Integer> constMap = new HashMap<>(128);
     Map<String, Integer> varMap = new HashMap<>(128);
     Map<String, Function> functionMap = new HashMap<String, Function>(128) {
