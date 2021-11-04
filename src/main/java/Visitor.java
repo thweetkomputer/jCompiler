@@ -18,7 +18,7 @@ public class Visitor extends ZccBaseVisitor<Void> {
     Map<String, Integer> varMap = new HashMap<>(128);
     Map<String, Function> functionMap = new HashMap<String, Function>(128) {
         {
-            put("putint", new Function("putint", "void", "int"));
+            put("putint", new Function("putint", "void", "i32"));
             put("getint", new Function("getint", "i32", "void"));
             put("putch", new Function("putch", "void", "i32"));
             put("getch", new Function("getch", "i32", "void"));
@@ -64,6 +64,27 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     @Override
     public Void visitStmt(ZccParser.StmtContext ctx) {
+        if (ctx.children.size() == 1) {
+            return null;
+        }
+        if (ctx.children.size() == 2) {
+            visit(ctx.exp());
+            return null;
+        }
+        if (ctx.children.size() == 3) {
+            visit(ctx.exp());
+            printf("\treturn i32 %%%d\n", index-1);
+            return null;
+        }
+        String name = ctx.lVal().ident().IDENT().toString();
+        if (findInConstMap(name)) {
+            ErrorHandler.err("cannot modify constant value");
+        }
+        if (!findInVarMap(name)){
+            ErrorHandler.err("cannot find variable %s", name);
+        }
+        visit(ctx.exp());
+        printf("\tstore i32 %%%d, i32* %%%d\n", index - 1, varMap.get(name));
         return null;
     }
 
@@ -202,7 +223,11 @@ public class Visitor extends ZccBaseVisitor<Void> {
             }
             List<Integer> list = paramsStack.pop();
             assert function != null;
-            printf("\t%%%d = call %s @%s(", index++, function.returnType, function.name);
+            if ("void".equals(function.returnType)) {
+                printf("\tcall %s @%s(", function.returnType, function.name);
+            } else {
+                printf("\t%%%d = call %s @%s(", index++, function.returnType, function.name);
+            }
             for (int i = 0; i < list.size(); i++) {
                 if (i != 0) {
                     print(", ");
