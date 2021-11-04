@@ -28,7 +28,7 @@ public class Main {
         System.out.println("declare i32 @getint()");
         System.out.println("declare i32 @getch()");
         System.out.println("declare void @putint(i32)");
-        System.out.println("declare void @putint(i32)");
+        System.out.println("declare void @putch(i32)");
         Visitor visitor = new Visitor();
         visitor.visit(tree);
     }
