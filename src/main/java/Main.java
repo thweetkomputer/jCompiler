@@ -1,8 +1,5 @@
-// Main.java
-
 import antlr.ZccLexer;
 import antlr.ZccParser;
-import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -20,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class Main {
     public static void main(String[] args) throws IOException {
         String content = getFileContent(new FileInputStream(args[0]), StandardCharsets.UTF_8.toString());
+        System.out.println(content);
         CharStream inputStream = CharStreams.fromString(content);
         ZccLexer lexer = new ZccLexer(inputStream);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -32,10 +30,28 @@ public class Main {
     }
 
     public static String getFileContent(FileInputStream fis, String encoding) throws IOException {
+        boolean isComment = false;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(fis, encoding))) {
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
+                if (isComment) {
+                    int offset = line.indexOf("*/");
+                    if (offset == -1) {
+                        continue;
+                    }
+                    line = line.substring(offset+2);
+                    isComment = false;
+                } else {
+                    int offset1 = line.indexOf("//");
+                    int offset2 = line.indexOf("/*");
+                    if (offset1 != -1 && (offset2 == -1 || offset2 > offset1)) {
+                            line = line.substring(0, offset1);
+                    } else if (offset2 != -1 && (offset1 == -1 || offset2 < offset1)){
+                        line = line.substring(0, offset2);
+                        isComment = true;
+                    }
+                }
                 sb.append(line);
                 sb.append('\n');
             }

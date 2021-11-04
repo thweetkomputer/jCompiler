@@ -13,6 +13,7 @@ public class Visitor extends ZccBaseVisitor<Void> {
     boolean acc = true;
     int index = 1;
     int constExpRes;
+    boolean calConstExp = false;
     Map<String, Integer> constMap = new HashMap<>(128);
     Map<String, Integer> varMap = new HashMap<>(128);
 
@@ -54,7 +55,7 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     @Override
     public Void visitDecl(ZccParser.DeclContext ctx) {
-        visit(ctx.varDecl() == null? ctx.constDecl() : ctx.varDecl());
+        visit(ctx.varDecl() == null ? ctx.constDecl() : ctx.varDecl());
         return null;
     }
 
@@ -99,12 +100,31 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     @Override
     public Void visitConstInitVal(ZccParser.ConstInitValContext ctx) {
-
+        calConstExp = true;
+        visit(ctx.constExp());
+        calConstExp = false;
         return null;
     }
 
     @Override
+    public Void visitConstExp(ZccParser.ConstExpContext ctx) {
+        visit(ctx.addExp());
+        return null;
+    }
+
+    @Override
+    public Void visitAddExp(ZccParser.AddExpContext ctx) {
+        int res = 0;
+        visit(ctx.mulExp(0));
+        for (int i = 1; i < ctx.children.size(); i += 2) {
+
+        }
+            return null;
+    }
+
+    @Override
     public Void visitVarDecl(ZccParser.VarDeclContext ctx) {
+        int a;
         return null;
     }
 
