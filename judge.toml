@@ -1,7 +1,7 @@
-[jobs.test-submit]
+[jobs.lab3]
 
-image = { source = "dockerfile", path = ".", tag = "test-submit" }
+image = { source = "dockerfile", path = ".", tag = "lab3" }
 
 run = [
-  "./test < $input",
+  "java Main $input > $ir",
 ]
