@@ -135,8 +135,9 @@ public class Visitor extends ZccBaseVisitor<Void> {
             }
             constExpRes = res;
         }
-        int vn = index;
+
         visit(ctx.mulExp(0));
+        int vn = index - 1;
         for (int i = 0; i < ctx.unaryOp().size(); i++) {
             visit(ctx.mulExp(i + 1));
             if (ctx.unaryOp().get(i).ADD() != null) {

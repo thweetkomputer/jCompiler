@@ -24,13 +24,13 @@ public class Main {
         parser.addErrorListener(new ExitErrorListener());
 
         ParseTree tree = parser.compUnit();
-//        System.out.println(tree.toStringTree(parser));
         System.out.println("declare i32 @getint()");
         System.out.println("declare i32 @getch()");
         System.out.println("declare void @putint(i32)");
         System.out.println("declare void @putch(i32)");
         Visitor visitor = new Visitor();
         visitor.visit(tree);
+        System.out.println(visitor.varMap);
     }
 
     public static String getFileContent(FileInputStream fis, String encoding) throws IOException {
