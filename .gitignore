@@ -2,3 +2,5 @@ src/main/test/*
 target/*
 test/*
 java/test/*
+java/*.class
+java/antlr/*.class
