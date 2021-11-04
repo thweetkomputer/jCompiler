@@ -27,21 +27,14 @@ public class Visitor extends ZccBaseVisitor<Void> {
         } else {
             funcType = "i32";
         }
-        printf("define dso_local %s @%s", funcType, ctx.funcDef().ident().IDENT());
-        if (ctx.funcDef().LPAREN() == null || ctx.funcDef().RPAREN() == null) {
-            ErrorHandler.err("missing () after function name");
-        }
-        print("()");
+        printf("define dso_local %s @%s()", funcType, ctx.funcDef().ident().IDENT());
         visit(ctx.funcDef().block());
         return null;
     }
 
     @Override
     public Void visitBlock(ZccParser.BlockContext ctx) {
-        if (ctx.LBRACE() == null || ctx.RBRACE() == null) {
-            ErrorHandler.err("missing {} in block");
-        }
-        print("{");
+        print("{\n");
         for (ZccParser.BlockItemContext blockItemContext : ctx.blockItem()) {
             visit(blockItemContext);
         }
@@ -69,15 +62,6 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     @Override
     public Void visitConstDecl(ZccParser.ConstDeclContext ctx) {
-        if (ctx.CONST() == null) {
-            ErrorHandler.err("missing const in constant declare");
-        }
-        if (ctx.bType() == null) {
-            ErrorHandler.err("missing type in constant declare");
-        }
-        if (ctx.COMMA() == null) {
-            ErrorHandler.err("missing ; in constant declare");
-        }
         for (ZccParser.ConstDefContext constDefContext : ctx.constDef()) {
             visit(constDefContext);
         }
@@ -86,14 +70,10 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     @Override
     public Void visitConstDef(ZccParser.ConstDefContext ctx) {
-        if (ctx.ASSIGN() == null || ctx.ident() == null || ctx.constInitVal() == null) {
-            ErrorHandler.err("constant undefined in constant declare");
-        }
         String name = ctx.ident().IDENT().toString();
         if (findInConstMap(name) || findInVarMap(name)) {
             ErrorHandler.err("constant already declare");
         }
-        constExpRes = 0;
         visit(ctx.constInitVal());
         constMap.put(name, constExpRes);
         return null;
@@ -230,6 +210,19 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     @Override
     public Void visitVarDecl(ZccParser.VarDeclContext ctx) {
+        for (ZccParser.VarDefContext varDefContext : ctx.varDef()) {
+            visit(varDefContext);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitVarDef(ZccParser.VarDefContext ctx) {
+        String name = ctx.ident().IDENT().toString();
+        if (findInConstMap(name) || findInVarMap(name)) {
+            ErrorHandler.err("variable already declare");
+        }
+        // TODO
         return null;
     }
 
