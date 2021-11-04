@@ -71,7 +71,7 @@ public class Visitor extends ZccBaseVisitor<Void> {
         }
         if (ctx.children.size() == 3) {
             visit(ctx.exp());
-            printf("\treturn i32 %%%d\n", index-1);
+            printf("\tret i32 %%%d\n", index-1);
             return null;
         }
         String name = ctx.lVal().ident().IDENT().toString();
