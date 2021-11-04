@@ -1,8 +1,6 @@
 FROM openjdk:8
-WORKDIR /WORK/
+WORKDIR /app/
 COPY java ./
 RUN ls
-WORKDIR /WORK/antlr/
-RUN ls
-WORKDIR /WORK/
+RUN ls antlr
 RUN javac Main.java
