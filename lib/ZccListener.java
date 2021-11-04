@@ -117,6 +117,16 @@ public interface ZccListener extends ParseTreeListener {
 	 */
 	void exitVarDecl(ZccParser.VarDeclContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ZccParser#cond}.
+	 * @param ctx the parse tree
+	 */
+	void enterCond(ZccParser.CondContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZccParser#cond}.
+	 * @param ctx the parse tree
+	 */
+	void exitCond(ZccParser.CondContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ZccParser#initVal}.
 	 * @param ctx the parse tree
 	 */
@@ -227,6 +237,46 @@ public interface ZccListener extends ParseTreeListener {
 	 */
 	void exitMulExp(ZccParser.MulExpContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ZccParser#relExp}.
+	 * @param ctx the parse tree
+	 */
+	void enterRelExp(ZccParser.RelExpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZccParser#relExp}.
+	 * @param ctx the parse tree
+	 */
+	void exitRelExp(ZccParser.RelExpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ZccParser#eqExp}.
+	 * @param ctx the parse tree
+	 */
+	void enterEqExp(ZccParser.EqExpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZccParser#eqExp}.
+	 * @param ctx the parse tree
+	 */
+	void exitEqExp(ZccParser.EqExpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ZccParser#lAndExp}.
+	 * @param ctx the parse tree
+	 */
+	void enterLAndExp(ZccParser.LAndExpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZccParser#lAndExp}.
+	 * @param ctx the parse tree
+	 */
+	void exitLAndExp(ZccParser.LAndExpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ZccParser#lOrExp}.
+	 * @param ctx the parse tree
+	 */
+	void enterLOrExp(ZccParser.LOrExpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZccParser#lOrExp}.
+	 * @param ctx the parse tree
+	 */
+	void exitLOrExp(ZccParser.LOrExpContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ZccParser#unaryExp}.
 	 * @param ctx the parse tree
 	 */
@@ -256,6 +306,26 @@ public interface ZccListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPUnayOp(ZccParser.PUnayOpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ZccParser#cmpOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterCmpOp(ZccParser.CmpOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZccParser#cmpOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitCmpOp(ZccParser.CmpOpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ZccParser#eOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterEOp(ZccParser.EOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZccParser#eOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitEOp(ZccParser.EOpContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ZccParser#funcRParams}.
 	 * @param ctx the parse tree

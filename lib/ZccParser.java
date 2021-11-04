@@ -16,42 +16,47 @@ public class ZccParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		VOID=1, INT=2, RETURN=3, CONST=4, IDENT=5, DECIMAL_CONST=6, OCTAL_CONST=7, 
-		HEXADECIMAL_CONST=8, WHITE_SPACE=9, ADD=10, SUB=11, MUL=12, DIV=13, MOD=14, 
-		LPAREN=15, RPAREN=16, LBRACE=17, RBRACE=18, LBRACK=19, RBRACK=20, COMMA=21, 
-		SEMECOLON=22, ASSIGN=23;
+		IF=1, ELSE=2, VOID=3, INT=4, RETURN=5, CONST=6, IDENT=7, DECIMAL_CONST=8, 
+		OCTAL_CONST=9, HEXADECIMAL_CONST=10, WHITE_SPACE=11, ADD=12, SUB=13, MUL=14, 
+		DIV=15, MOD=16, NOT=17, LPAREN=18, RPAREN=19, LBRACE=20, RBRACE=21, LBRACK=22, 
+		RBRACK=23, GE=24, LE=25, GT=26, LT=27, COMMA=28, SEMECOLON=29, EQ=30, 
+		NE=31, AND=32, OR=33, ASSIGN=34;
 	public static final int
 		RULE_ident = 0, RULE_number = 1, RULE_compUnit = 2, RULE_decl = 3, RULE_constDecl = 4, 
 		RULE_bType = 5, RULE_constDef = 6, RULE_constInitVal = 7, RULE_constExp = 8, 
-		RULE_varDef = 9, RULE_varDecl = 10, RULE_initVal = 11, RULE_funcDef = 12, 
-		RULE_funcType = 13, RULE_block = 14, RULE_blockItem = 15, RULE_stmt = 16, 
-		RULE_exp = 17, RULE_lVal = 18, RULE_primaryExp = 19, RULE_addExp = 20, 
-		RULE_mulExp = 21, RULE_unaryExp = 22, RULE_unaryOp = 23, RULE_pUnayOp = 24, 
-		RULE_funcRParams = 25;
+		RULE_varDef = 9, RULE_varDecl = 10, RULE_cond = 11, RULE_initVal = 12, 
+		RULE_funcDef = 13, RULE_funcType = 14, RULE_block = 15, RULE_blockItem = 16, 
+		RULE_stmt = 17, RULE_exp = 18, RULE_lVal = 19, RULE_primaryExp = 20, RULE_addExp = 21, 
+		RULE_mulExp = 22, RULE_relExp = 23, RULE_eqExp = 24, RULE_lAndExp = 25, 
+		RULE_lOrExp = 26, RULE_unaryExp = 27, RULE_unaryOp = 28, RULE_pUnayOp = 29, 
+		RULE_cmpOp = 30, RULE_eOp = 31, RULE_funcRParams = 32;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"ident", "number", "compUnit", "decl", "constDecl", "bType", "constDef", 
-			"constInitVal", "constExp", "varDef", "varDecl", "initVal", "funcDef", 
+			"constInitVal", "constExp", "varDef", "varDecl", "cond", "initVal", "funcDef", 
 			"funcType", "block", "blockItem", "stmt", "exp", "lVal", "primaryExp", 
-			"addExp", "mulExp", "unaryExp", "unaryOp", "pUnayOp", "funcRParams"
+			"addExp", "mulExp", "relExp", "eqExp", "lAndExp", "lOrExp", "unaryExp", 
+			"unaryOp", "pUnayOp", "cmpOp", "eOp", "funcRParams"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'void'", "'int'", "'return'", "'const'", null, null, null, null, 
-			null, "'+'", "'-'", "'*'", "'/'", "'%'", "'('", "')'", "'{'", "'}'", 
-			"'['", "']'", "','", "';'", "'='"
+			null, "'if'", "'else'", "'void'", "'int'", "'return'", "'const'", null, 
+			null, null, null, null, "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'('", 
+			"')'", "'{'", "'}'", "'['", "']'", "'>='", "'<='", "'>'", "'<'", "','", 
+			"';'", "'=='", "'!='", "'&&'", "'||'", "'='"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "VOID", "INT", "RETURN", "CONST", "IDENT", "DECIMAL_CONST", "OCTAL_CONST", 
-			"HEXADECIMAL_CONST", "WHITE_SPACE", "ADD", "SUB", "MUL", "DIV", "MOD", 
-			"LPAREN", "RPAREN", "LBRACE", "RBRACE", "LBRACK", "RBRACK", "COMMA", 
-			"SEMECOLON", "ASSIGN"
+			null, "IF", "ELSE", "VOID", "INT", "RETURN", "CONST", "IDENT", "DECIMAL_CONST", 
+			"OCTAL_CONST", "HEXADECIMAL_CONST", "WHITE_SPACE", "ADD", "SUB", "MUL", 
+			"DIV", "MOD", "NOT", "LPAREN", "RPAREN", "LBRACE", "RBRACE", "LBRACK", 
+			"RBRACK", "GE", "LE", "GT", "LT", "COMMA", "SEMECOLON", "EQ", "NE", "AND", 
+			"OR", "ASSIGN"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -132,7 +137,7 @@ public class ZccParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(52);
+			setState(66);
 			match(IDENT);
 			}
 		}
@@ -177,7 +182,7 @@ public class ZccParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(54);
+			setState(68);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << DECIMAL_CONST) | (1L << OCTAL_CONST) | (1L << HEXADECIMAL_CONST))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -229,7 +234,7 @@ public class ZccParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(56);
+			setState(70);
 			funcDef();
 			}
 		}
@@ -274,20 +279,20 @@ public class ZccParser extends Parser {
 		DeclContext _localctx = new DeclContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_decl);
 		try {
-			setState(60);
+			setState(74);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case CONST:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(58);
+				setState(72);
 				constDecl();
 				}
 				break;
 			case INT:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(59);
+				setState(73);
 				varDecl();
 				}
 				break;
@@ -348,29 +353,29 @@ public class ZccParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(62);
+			setState(76);
 			match(CONST);
-			setState(63);
+			setState(77);
 			bType();
-			setState(64);
+			setState(78);
 			constDef();
-			setState(69);
+			setState(83);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(65);
+				setState(79);
 				match(COMMA);
-				setState(66);
+				setState(80);
 				constDef();
 				}
 				}
-				setState(71);
+				setState(85);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(72);
+			setState(86);
 			match(SEMECOLON);
 			}
 		}
@@ -412,7 +417,7 @@ public class ZccParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(74);
+			setState(88);
 			match(INT);
 			}
 		}
@@ -460,11 +465,11 @@ public class ZccParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(76);
+			setState(90);
 			ident();
-			setState(77);
+			setState(91);
 			match(ASSIGN);
-			setState(78);
+			setState(92);
 			constInitVal();
 			}
 		}
@@ -508,7 +513,7 @@ public class ZccParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(80);
+			setState(94);
 			constExp();
 			}
 		}
@@ -552,7 +557,7 @@ public class ZccParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(82);
+			setState(96);
 			addExp();
 			}
 		}
@@ -598,24 +603,24 @@ public class ZccParser extends Parser {
 		VarDefContext _localctx = new VarDefContext(_ctx, getState());
 		enterRule(_localctx, 18, RULE_varDef);
 		try {
-			setState(89);
+			setState(103);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(84);
+				setState(98);
 				ident();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(85);
+				setState(99);
 				ident();
-				setState(86);
+				setState(100);
 				match(ASSIGN);
-				setState(87);
+				setState(101);
 				initVal();
 				}
 				break;
@@ -673,28 +678,72 @@ public class ZccParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(91);
+			setState(105);
 			bType();
-			setState(92);
+			setState(106);
 			varDef();
-			setState(97);
+			setState(111);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(93);
+				setState(107);
 				match(COMMA);
-				setState(94);
+				setState(108);
 				varDef();
 				}
 				}
-				setState(99);
+				setState(113);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(100);
+			setState(114);
 			match(SEMECOLON);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class CondContext extends ParserRuleContext {
+		public LOrExpContext lOrExp() {
+			return getRuleContext(LOrExpContext.class,0);
+		}
+		public CondContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_cond; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).enterCond(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).exitCond(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ZccVisitor ) return ((ZccVisitor<? extends T>)visitor).visitCond(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final CondContext cond() throws RecognitionException {
+		CondContext _localctx = new CondContext(_ctx, getState());
+		enterRule(_localctx, 22, RULE_cond);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(116);
+			lOrExp();
 			}
 		}
 		catch (RecognitionException re) {
@@ -733,11 +782,11 @@ public class ZccParser extends Parser {
 
 	public final InitValContext initVal() throws RecognitionException {
 		InitValContext _localctx = new InitValContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_initVal);
+		enterRule(_localctx, 24, RULE_initVal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(102);
+			setState(118);
 			exp();
 			}
 		}
@@ -785,19 +834,19 @@ public class ZccParser extends Parser {
 
 	public final FuncDefContext funcDef() throws RecognitionException {
 		FuncDefContext _localctx = new FuncDefContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_funcDef);
+		enterRule(_localctx, 26, RULE_funcDef);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(104);
+			setState(120);
 			funcType();
-			setState(105);
+			setState(121);
 			ident();
-			setState(106);
+			setState(122);
 			match(LPAREN);
-			setState(107);
+			setState(123);
 			match(RPAREN);
-			setState(108);
+			setState(124);
 			block();
 			}
 		}
@@ -835,11 +884,11 @@ public class ZccParser extends Parser {
 
 	public final FuncTypeContext funcType() throws RecognitionException {
 		FuncTypeContext _localctx = new FuncTypeContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_funcType);
+		enterRule(_localctx, 28, RULE_funcType);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(110);
+			setState(126);
 			match(INT);
 			}
 		}
@@ -884,28 +933,28 @@ public class ZccParser extends Parser {
 
 	public final BlockContext block() throws RecognitionException {
 		BlockContext _localctx = new BlockContext(_ctx, getState());
-		enterRule(_localctx, 28, RULE_block);
+		enterRule(_localctx, 30, RULE_block);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(112);
+			setState(128);
 			match(LBRACE);
-			setState(116);
+			setState(132);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << RETURN) | (1L << CONST) | (1L << IDENT) | (1L << DECIMAL_CONST) | (1L << OCTAL_CONST) | (1L << HEXADECIMAL_CONST) | (1L << ADD) | (1L << SUB) | (1L << LPAREN) | (1L << SEMECOLON))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IF) | (1L << INT) | (1L << RETURN) | (1L << CONST) | (1L << IDENT) | (1L << DECIMAL_CONST) | (1L << OCTAL_CONST) | (1L << HEXADECIMAL_CONST) | (1L << ADD) | (1L << SUB) | (1L << NOT) | (1L << LPAREN) | (1L << SEMECOLON))) != 0)) {
 				{
 				{
-				setState(113);
+				setState(129);
 				blockItem();
 				}
 				}
-				setState(118);
+				setState(134);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(119);
+			setState(135);
 			match(RBRACE);
 			}
 		}
@@ -948,19 +997,20 @@ public class ZccParser extends Parser {
 
 	public final BlockItemContext blockItem() throws RecognitionException {
 		BlockItemContext _localctx = new BlockItemContext(_ctx, getState());
-		enterRule(_localctx, 30, RULE_blockItem);
+		enterRule(_localctx, 32, RULE_blockItem);
 		try {
-			setState(123);
+			setState(139);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INT:
 			case CONST:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(121);
+				setState(137);
 				decl();
 				}
 				break;
+			case IF:
 			case RETURN:
 			case IDENT:
 			case DECIMAL_CONST:
@@ -968,11 +1018,12 @@ public class ZccParser extends Parser {
 			case HEXADECIMAL_CONST:
 			case ADD:
 			case SUB:
+			case NOT:
 			case LPAREN:
 			case SEMECOLON:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(122);
+				setState(138);
 				stmt();
 				}
 				break;
@@ -1001,6 +1052,22 @@ public class ZccParser extends Parser {
 		}
 		public TerminalNode SEMECOLON() { return getToken(ZccParser.SEMECOLON, 0); }
 		public TerminalNode RETURN() { return getToken(ZccParser.RETURN, 0); }
+		public TerminalNode IF() { return getToken(ZccParser.IF, 0); }
+		public TerminalNode LPAREN() { return getToken(ZccParser.LPAREN, 0); }
+		public CondContext cond() {
+			return getRuleContext(CondContext.class,0);
+		}
+		public TerminalNode RPAREN() { return getToken(ZccParser.RPAREN, 0); }
+		public List<StmtContext> stmt() {
+			return getRuleContexts(StmtContext.class);
+		}
+		public StmtContext stmt(int i) {
+			return getRuleContext(StmtContext.class,i);
+		}
+		public List<TerminalNode> ELSE() { return getTokens(ZccParser.ELSE); }
+		public TerminalNode ELSE(int i) {
+			return getToken(ZccParser.ELSE, i);
+		}
 		public StmtContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1022,51 +1089,85 @@ public class ZccParser extends Parser {
 
 	public final StmtContext stmt() throws RecognitionException {
 		StmtContext _localctx = new StmtContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_stmt);
+		enterRule(_localctx, 34, RULE_stmt);
 		int _la;
 		try {
-			setState(138);
+			int _alt;
+			setState(166);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(125);
+				setState(141);
 				lVal();
-				setState(126);
+				setState(142);
 				match(ASSIGN);
-				setState(127);
+				setState(143);
 				exp();
-				setState(128);
+				setState(144);
 				match(SEMECOLON);
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(131);
+				setState(147);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IDENT) | (1L << DECIMAL_CONST) | (1L << OCTAL_CONST) | (1L << HEXADECIMAL_CONST) | (1L << ADD) | (1L << SUB) | (1L << LPAREN))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IDENT) | (1L << DECIMAL_CONST) | (1L << OCTAL_CONST) | (1L << HEXADECIMAL_CONST) | (1L << ADD) | (1L << SUB) | (1L << NOT) | (1L << LPAREN))) != 0)) {
 					{
-					setState(130);
+					setState(146);
 					exp();
 					}
 				}
 
-				setState(133);
+				setState(149);
 				match(SEMECOLON);
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(134);
+				setState(150);
 				match(RETURN);
-				setState(135);
+				setState(151);
 				exp();
-				setState(136);
+				setState(152);
 				match(SEMECOLON);
+				}
+				break;
+			case 4:
+				enterOuterAlt(_localctx, 4);
+				{
+				setState(154);
+				match(IF);
+				setState(155);
+				match(LPAREN);
+				setState(156);
+				cond();
+				setState(157);
+				match(RPAREN);
+				setState(158);
+				stmt();
+				setState(163);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
+				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+					if ( _alt==1 ) {
+						{
+						{
+						setState(159);
+						match(ELSE);
+						setState(160);
+						stmt();
+						}
+						} 
+					}
+					setState(165);
+					_errHandler.sync(this);
+					_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
+				}
 				}
 				break;
 			}
@@ -1107,11 +1208,11 @@ public class ZccParser extends Parser {
 
 	public final ExpContext exp() throws RecognitionException {
 		ExpContext _localctx = new ExpContext(_ctx, getState());
-		enterRule(_localctx, 34, RULE_exp);
+		enterRule(_localctx, 36, RULE_exp);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(140);
+			setState(168);
 			addExp();
 			}
 		}
@@ -1151,11 +1252,11 @@ public class ZccParser extends Parser {
 
 	public final LValContext lVal() throws RecognitionException {
 		LValContext _localctx = new LValContext(_ctx, getState());
-		enterRule(_localctx, 36, RULE_lVal);
+		enterRule(_localctx, 38, RULE_lVal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(142);
+			setState(170);
 			ident();
 			}
 		}
@@ -1203,26 +1304,26 @@ public class ZccParser extends Parser {
 
 	public final PrimaryExpContext primaryExp() throws RecognitionException {
 		PrimaryExpContext _localctx = new PrimaryExpContext(_ctx, getState());
-		enterRule(_localctx, 38, RULE_primaryExp);
+		enterRule(_localctx, 40, RULE_primaryExp);
 		try {
-			setState(150);
+			setState(178);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case LPAREN:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(144);
+				setState(172);
 				match(LPAREN);
-				setState(145);
+				setState(173);
 				exp();
-				setState(146);
+				setState(174);
 				match(RPAREN);
 				}
 				break;
 			case IDENT:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(148);
+				setState(176);
 				lVal();
 				}
 				break;
@@ -1231,7 +1332,7 @@ public class ZccParser extends Parser {
 			case HEXADECIMAL_CONST:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(149);
+				setState(177);
 				number();
 				}
 				break;
@@ -1284,26 +1385,26 @@ public class ZccParser extends Parser {
 
 	public final AddExpContext addExp() throws RecognitionException {
 		AddExpContext _localctx = new AddExpContext(_ctx, getState());
-		enterRule(_localctx, 40, RULE_addExp);
+		enterRule(_localctx, 42, RULE_addExp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(152);
+			setState(180);
 			mulExp();
-			setState(158);
+			setState(186);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==ADD || _la==SUB) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << SUB) | (1L << NOT))) != 0)) {
 				{
 				{
-				setState(153);
+				setState(181);
 				unaryOp();
-				setState(154);
+				setState(182);
 				mulExp();
 				}
 				}
-				setState(160);
+				setState(188);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1354,26 +1455,307 @@ public class ZccParser extends Parser {
 
 	public final MulExpContext mulExp() throws RecognitionException {
 		MulExpContext _localctx = new MulExpContext(_ctx, getState());
-		enterRule(_localctx, 42, RULE_mulExp);
+		enterRule(_localctx, 44, RULE_mulExp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(161);
+			setState(189);
 			unaryExp();
-			setState(167);
+			setState(195);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MUL) | (1L << DIV) | (1L << MOD))) != 0)) {
 				{
 				{
-				setState(162);
+				setState(190);
 				pUnayOp();
-				setState(163);
+				setState(191);
 				unaryExp();
 				}
 				}
-				setState(169);
+				setState(197);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class RelExpContext extends ParserRuleContext {
+		public List<AddExpContext> addExp() {
+			return getRuleContexts(AddExpContext.class);
+		}
+		public AddExpContext addExp(int i) {
+			return getRuleContext(AddExpContext.class,i);
+		}
+		public List<CmpOpContext> cmpOp() {
+			return getRuleContexts(CmpOpContext.class);
+		}
+		public CmpOpContext cmpOp(int i) {
+			return getRuleContext(CmpOpContext.class,i);
+		}
+		public RelExpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_relExp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).enterRelExp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).exitRelExp(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ZccVisitor ) return ((ZccVisitor<? extends T>)visitor).visitRelExp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final RelExpContext relExp() throws RecognitionException {
+		RelExpContext _localctx = new RelExpContext(_ctx, getState());
+		enterRule(_localctx, 46, RULE_relExp);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(198);
+			addExp();
+			setState(204);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << GE) | (1L << LE) | (1L << GT) | (1L << LT))) != 0)) {
+				{
+				{
+				setState(199);
+				cmpOp();
+				setState(200);
+				addExp();
+				}
+				}
+				setState(206);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class EqExpContext extends ParserRuleContext {
+		public RelExpContext relExp() {
+			return getRuleContext(RelExpContext.class,0);
+		}
+		public List<EOpContext> eOp() {
+			return getRuleContexts(EOpContext.class);
+		}
+		public EOpContext eOp(int i) {
+			return getRuleContext(EOpContext.class,i);
+		}
+		public List<EqExpContext> eqExp() {
+			return getRuleContexts(EqExpContext.class);
+		}
+		public EqExpContext eqExp(int i) {
+			return getRuleContext(EqExpContext.class,i);
+		}
+		public EqExpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_eqExp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).enterEqExp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).exitEqExp(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ZccVisitor ) return ((ZccVisitor<? extends T>)visitor).visitEqExp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final EqExpContext eqExp() throws RecognitionException {
+		EqExpContext _localctx = new EqExpContext(_ctx, getState());
+		enterRule(_localctx, 48, RULE_eqExp);
+		try {
+			int _alt;
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(207);
+			relExp();
+			setState(213);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,13,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					{
+					{
+					setState(208);
+					eOp();
+					setState(209);
+					eqExp();
+					}
+					} 
+				}
+				setState(215);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,13,_ctx);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class LAndExpContext extends ParserRuleContext {
+		public List<EqExpContext> eqExp() {
+			return getRuleContexts(EqExpContext.class);
+		}
+		public EqExpContext eqExp(int i) {
+			return getRuleContext(EqExpContext.class,i);
+		}
+		public List<TerminalNode> AND() { return getTokens(ZccParser.AND); }
+		public TerminalNode AND(int i) {
+			return getToken(ZccParser.AND, i);
+		}
+		public LAndExpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_lAndExp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).enterLAndExp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).exitLAndExp(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ZccVisitor ) return ((ZccVisitor<? extends T>)visitor).visitLAndExp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final LAndExpContext lAndExp() throws RecognitionException {
+		LAndExpContext _localctx = new LAndExpContext(_ctx, getState());
+		enterRule(_localctx, 50, RULE_lAndExp);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(216);
+			eqExp();
+			setState(221);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==AND) {
+				{
+				{
+				setState(217);
+				match(AND);
+				setState(218);
+				eqExp();
+				}
+				}
+				setState(223);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class LOrExpContext extends ParserRuleContext {
+		public List<LAndExpContext> lAndExp() {
+			return getRuleContexts(LAndExpContext.class);
+		}
+		public LAndExpContext lAndExp(int i) {
+			return getRuleContext(LAndExpContext.class,i);
+		}
+		public List<TerminalNode> OR() { return getTokens(ZccParser.OR); }
+		public TerminalNode OR(int i) {
+			return getToken(ZccParser.OR, i);
+		}
+		public LOrExpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_lOrExp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).enterLOrExp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).exitLOrExp(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ZccVisitor ) return ((ZccVisitor<? extends T>)visitor).visitLOrExp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final LOrExpContext lOrExp() throws RecognitionException {
+		LOrExpContext _localctx = new LOrExpContext(_ctx, getState());
+		enterRule(_localctx, 52, RULE_lOrExp);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(224);
+			lAndExp();
+			setState(229);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==OR) {
+				{
+				{
+				setState(225);
+				match(OR);
+				setState(226);
+				lAndExp();
+				}
+				}
+				setState(231);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1429,46 +1811,46 @@ public class ZccParser extends Parser {
 
 	public final UnaryExpContext unaryExp() throws RecognitionException {
 		UnaryExpContext _localctx = new UnaryExpContext(_ctx, getState());
-		enterRule(_localctx, 44, RULE_unaryExp);
+		enterRule(_localctx, 54, RULE_unaryExp);
 		int _la;
 		try {
-			setState(181);
+			setState(243);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(170);
+				setState(232);
 				primaryExp();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(171);
+				setState(233);
 				ident();
-				setState(172);
+				setState(234);
 				match(LPAREN);
-				setState(174);
+				setState(236);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IDENT) | (1L << DECIMAL_CONST) | (1L << OCTAL_CONST) | (1L << HEXADECIMAL_CONST) | (1L << ADD) | (1L << SUB) | (1L << LPAREN))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IDENT) | (1L << DECIMAL_CONST) | (1L << OCTAL_CONST) | (1L << HEXADECIMAL_CONST) | (1L << ADD) | (1L << SUB) | (1L << NOT) | (1L << LPAREN))) != 0)) {
 					{
-					setState(173);
+					setState(235);
 					funcRParams();
 					}
 				}
 
-				setState(176);
+				setState(238);
 				match(RPAREN);
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(178);
+				setState(240);
 				unaryOp();
-				setState(179);
+				setState(241);
 				unaryExp();
 				}
 				break;
@@ -1488,6 +1870,7 @@ public class ZccParser extends Parser {
 	public static class UnaryOpContext extends ParserRuleContext {
 		public TerminalNode ADD() { return getToken(ZccParser.ADD, 0); }
 		public TerminalNode SUB() { return getToken(ZccParser.SUB, 0); }
+		public TerminalNode NOT() { return getToken(ZccParser.NOT, 0); }
 		public UnaryOpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1509,14 +1892,14 @@ public class ZccParser extends Parser {
 
 	public final UnaryOpContext unaryOp() throws RecognitionException {
 		UnaryOpContext _localctx = new UnaryOpContext(_ctx, getState());
-		enterRule(_localctx, 46, RULE_unaryOp);
+		enterRule(_localctx, 56, RULE_unaryOp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(183);
+			setState(245);
 			_la = _input.LA(1);
-			if ( !(_la==ADD || _la==SUB) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << SUB) | (1L << NOT))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -1562,14 +1945,120 @@ public class ZccParser extends Parser {
 
 	public final PUnayOpContext pUnayOp() throws RecognitionException {
 		PUnayOpContext _localctx = new PUnayOpContext(_ctx, getState());
-		enterRule(_localctx, 48, RULE_pUnayOp);
+		enterRule(_localctx, 58, RULE_pUnayOp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(185);
+			setState(247);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MUL) | (1L << DIV) | (1L << MOD))) != 0)) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class CmpOpContext extends ParserRuleContext {
+		public TerminalNode LT() { return getToken(ZccParser.LT, 0); }
+		public TerminalNode GT() { return getToken(ZccParser.GT, 0); }
+		public TerminalNode LE() { return getToken(ZccParser.LE, 0); }
+		public TerminalNode GE() { return getToken(ZccParser.GE, 0); }
+		public CmpOpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_cmpOp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).enterCmpOp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).exitCmpOp(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ZccVisitor ) return ((ZccVisitor<? extends T>)visitor).visitCmpOp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final CmpOpContext cmpOp() throws RecognitionException {
+		CmpOpContext _localctx = new CmpOpContext(_ctx, getState());
+		enterRule(_localctx, 60, RULE_cmpOp);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(249);
+			_la = _input.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << GE) | (1L << LE) | (1L << GT) | (1L << LT))) != 0)) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class EOpContext extends ParserRuleContext {
+		public TerminalNode EQ() { return getToken(ZccParser.EQ, 0); }
+		public TerminalNode NE() { return getToken(ZccParser.NE, 0); }
+		public EOpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_eOp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).enterEOp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ZccListener ) ((ZccListener)listener).exitEOp(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ZccVisitor ) return ((ZccVisitor<? extends T>)visitor).visitEOp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final EOpContext eOp() throws RecognitionException {
+		EOpContext _localctx = new EOpContext(_ctx, getState());
+		enterRule(_localctx, 62, RULE_eOp);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(251);
+			_la = _input.LA(1);
+			if ( !(_la==EQ || _la==NE) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -1622,26 +2111,26 @@ public class ZccParser extends Parser {
 
 	public final FuncRParamsContext funcRParams() throws RecognitionException {
 		FuncRParamsContext _localctx = new FuncRParamsContext(_ctx, getState());
-		enterRule(_localctx, 50, RULE_funcRParams);
+		enterRule(_localctx, 64, RULE_funcRParams);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(187);
+			setState(253);
 			exp();
-			setState(192);
+			setState(258);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(188);
+				setState(254);
 				match(COMMA);
-				setState(189);
+				setState(255);
 				exp();
 				}
 				}
-				setState(194);
+				setState(260);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1659,64 +2148,90 @@ public class ZccParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\31\u00c6\4\2\t\2"+
-		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
-		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3$\u0108\4\2\t\2\4"+
+		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
+		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
-		"\4\32\t\32\4\33\t\33\3\2\3\2\3\3\3\3\3\4\3\4\3\5\3\5\5\5?\n\5\3\6\3\6"+
-		"\3\6\3\6\3\6\7\6F\n\6\f\6\16\6I\13\6\3\6\3\6\3\7\3\7\3\b\3\b\3\b\3\b\3"+
-		"\t\3\t\3\n\3\n\3\13\3\13\3\13\3\13\3\13\5\13\\\n\13\3\f\3\f\3\f\3\f\7"+
-		"\fb\n\f\f\f\16\fe\13\f\3\f\3\f\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\3"+
-		"\17\3\17\3\20\3\20\7\20u\n\20\f\20\16\20x\13\20\3\20\3\20\3\21\3\21\5"+
-		"\21~\n\21\3\22\3\22\3\22\3\22\3\22\3\22\5\22\u0086\n\22\3\22\3\22\3\22"+
-		"\3\22\3\22\5\22\u008d\n\22\3\23\3\23\3\24\3\24\3\25\3\25\3\25\3\25\3\25"+
-		"\3\25\5\25\u0099\n\25\3\26\3\26\3\26\3\26\7\26\u009f\n\26\f\26\16\26\u00a2"+
-		"\13\26\3\27\3\27\3\27\3\27\7\27\u00a8\n\27\f\27\16\27\u00ab\13\27\3\30"+
-		"\3\30\3\30\3\30\5\30\u00b1\n\30\3\30\3\30\3\30\3\30\3\30\5\30\u00b8\n"+
-		"\30\3\31\3\31\3\32\3\32\3\33\3\33\3\33\7\33\u00c1\n\33\f\33\16\33\u00c4"+
-		"\13\33\3\33\2\2\34\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60"+
-		"\62\64\2\5\3\2\b\n\3\2\f\r\3\2\16\20\2\u00bc\2\66\3\2\2\2\48\3\2\2\2\6"+
-		":\3\2\2\2\b>\3\2\2\2\n@\3\2\2\2\fL\3\2\2\2\16N\3\2\2\2\20R\3\2\2\2\22"+
-		"T\3\2\2\2\24[\3\2\2\2\26]\3\2\2\2\30h\3\2\2\2\32j\3\2\2\2\34p\3\2\2\2"+
-		"\36r\3\2\2\2 }\3\2\2\2\"\u008c\3\2\2\2$\u008e\3\2\2\2&\u0090\3\2\2\2("+
-		"\u0098\3\2\2\2*\u009a\3\2\2\2,\u00a3\3\2\2\2.\u00b7\3\2\2\2\60\u00b9\3"+
-		"\2\2\2\62\u00bb\3\2\2\2\64\u00bd\3\2\2\2\66\67\7\7\2\2\67\3\3\2\2\289"+
-		"\t\2\2\29\5\3\2\2\2:;\5\32\16\2;\7\3\2\2\2<?\5\n\6\2=?\5\26\f\2><\3\2"+
-		"\2\2>=\3\2\2\2?\t\3\2\2\2@A\7\6\2\2AB\5\f\7\2BG\5\16\b\2CD\7\27\2\2DF"+
-		"\5\16\b\2EC\3\2\2\2FI\3\2\2\2GE\3\2\2\2GH\3\2\2\2HJ\3\2\2\2IG\3\2\2\2"+
-		"JK\7\30\2\2K\13\3\2\2\2LM\7\4\2\2M\r\3\2\2\2NO\5\2\2\2OP\7\31\2\2PQ\5"+
-		"\20\t\2Q\17\3\2\2\2RS\5\22\n\2S\21\3\2\2\2TU\5*\26\2U\23\3\2\2\2V\\\5"+
-		"\2\2\2WX\5\2\2\2XY\7\31\2\2YZ\5\30\r\2Z\\\3\2\2\2[V\3\2\2\2[W\3\2\2\2"+
-		"\\\25\3\2\2\2]^\5\f\7\2^c\5\24\13\2_`\7\27\2\2`b\5\24\13\2a_\3\2\2\2b"+
-		"e\3\2\2\2ca\3\2\2\2cd\3\2\2\2df\3\2\2\2ec\3\2\2\2fg\7\30\2\2g\27\3\2\2"+
-		"\2hi\5$\23\2i\31\3\2\2\2jk\5\34\17\2kl\5\2\2\2lm\7\21\2\2mn\7\22\2\2n"+
-		"o\5\36\20\2o\33\3\2\2\2pq\7\4\2\2q\35\3\2\2\2rv\7\23\2\2su\5 \21\2ts\3"+
-		"\2\2\2ux\3\2\2\2vt\3\2\2\2vw\3\2\2\2wy\3\2\2\2xv\3\2\2\2yz\7\24\2\2z\37"+
-		"\3\2\2\2{~\5\b\5\2|~\5\"\22\2}{\3\2\2\2}|\3\2\2\2~!\3\2\2\2\177\u0080"+
-		"\5&\24\2\u0080\u0081\7\31\2\2\u0081\u0082\5$\23\2\u0082\u0083\7\30\2\2"+
-		"\u0083\u008d\3\2\2\2\u0084\u0086\5$\23\2\u0085\u0084\3\2\2\2\u0085\u0086"+
-		"\3\2\2\2\u0086\u0087\3\2\2\2\u0087\u008d\7\30\2\2\u0088\u0089\7\5\2\2"+
-		"\u0089\u008a\5$\23\2\u008a\u008b\7\30\2\2\u008b\u008d\3\2\2\2\u008c\177"+
-		"\3\2\2\2\u008c\u0085\3\2\2\2\u008c\u0088\3\2\2\2\u008d#\3\2\2\2\u008e"+
-		"\u008f\5*\26\2\u008f%\3\2\2\2\u0090\u0091\5\2\2\2\u0091\'\3\2\2\2\u0092"+
-		"\u0093\7\21\2\2\u0093\u0094\5$\23\2\u0094\u0095\7\22\2\2\u0095\u0099\3"+
-		"\2\2\2\u0096\u0099\5&\24\2\u0097\u0099\5\4\3\2\u0098\u0092\3\2\2\2\u0098"+
-		"\u0096\3\2\2\2\u0098\u0097\3\2\2\2\u0099)\3\2\2\2\u009a\u00a0\5,\27\2"+
-		"\u009b\u009c\5\60\31\2\u009c\u009d\5,\27\2\u009d\u009f\3\2\2\2\u009e\u009b"+
-		"\3\2\2\2\u009f\u00a2\3\2\2\2\u00a0\u009e\3\2\2\2\u00a0\u00a1\3\2\2\2\u00a1"+
-		"+\3\2\2\2\u00a2\u00a0\3\2\2\2\u00a3\u00a9\5.\30\2\u00a4\u00a5\5\62\32"+
-		"\2\u00a5\u00a6\5.\30\2\u00a6\u00a8\3\2\2\2\u00a7\u00a4\3\2\2\2\u00a8\u00ab"+
-		"\3\2\2\2\u00a9\u00a7\3\2\2\2\u00a9\u00aa\3\2\2\2\u00aa-\3\2\2\2\u00ab"+
-		"\u00a9\3\2\2\2\u00ac\u00b8\5(\25\2\u00ad\u00ae\5\2\2\2\u00ae\u00b0\7\21"+
-		"\2\2\u00af\u00b1\5\64\33\2\u00b0\u00af\3\2\2\2\u00b0\u00b1\3\2\2\2\u00b1"+
-		"\u00b2\3\2\2\2\u00b2\u00b3\7\22\2\2\u00b3\u00b8\3\2\2\2\u00b4\u00b5\5"+
-		"\60\31\2\u00b5\u00b6\5.\30\2\u00b6\u00b8\3\2\2\2\u00b7\u00ac\3\2\2\2\u00b7"+
-		"\u00ad\3\2\2\2\u00b7\u00b4\3\2\2\2\u00b8/\3\2\2\2\u00b9\u00ba\t\3\2\2"+
-		"\u00ba\61\3\2\2\2\u00bb\u00bc\t\4\2\2\u00bc\63\3\2\2\2\u00bd\u00c2\5$"+
-		"\23\2\u00be\u00bf\7\27\2\2\u00bf\u00c1\5$\23\2\u00c0\u00be\3\2\2\2\u00c1"+
-		"\u00c4\3\2\2\2\u00c2\u00c0\3\2\2\2\u00c2\u00c3\3\2\2\2\u00c3\65\3\2\2"+
-		"\2\u00c4\u00c2\3\2\2\2\20>G[cv}\u0085\u008c\u0098\u00a0\u00a9\u00b0\u00b7"+
-		"\u00c2";
+		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36\4\37\t\37\4 \t \4!"+
+		"\t!\4\"\t\"\3\2\3\2\3\3\3\3\3\4\3\4\3\5\3\5\5\5M\n\5\3\6\3\6\3\6\3\6\3"+
+		"\6\7\6T\n\6\f\6\16\6W\13\6\3\6\3\6\3\7\3\7\3\b\3\b\3\b\3\b\3\t\3\t\3\n"+
+		"\3\n\3\13\3\13\3\13\3\13\3\13\5\13j\n\13\3\f\3\f\3\f\3\f\7\fp\n\f\f\f"+
+		"\16\fs\13\f\3\f\3\f\3\r\3\r\3\16\3\16\3\17\3\17\3\17\3\17\3\17\3\17\3"+
+		"\20\3\20\3\21\3\21\7\21\u0085\n\21\f\21\16\21\u0088\13\21\3\21\3\21\3"+
+		"\22\3\22\5\22\u008e\n\22\3\23\3\23\3\23\3\23\3\23\3\23\5\23\u0096\n\23"+
+		"\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\7\23\u00a4"+
+		"\n\23\f\23\16\23\u00a7\13\23\5\23\u00a9\n\23\3\24\3\24\3\25\3\25\3\26"+
+		"\3\26\3\26\3\26\3\26\3\26\5\26\u00b5\n\26\3\27\3\27\3\27\3\27\7\27\u00bb"+
+		"\n\27\f\27\16\27\u00be\13\27\3\30\3\30\3\30\3\30\7\30\u00c4\n\30\f\30"+
+		"\16\30\u00c7\13\30\3\31\3\31\3\31\3\31\7\31\u00cd\n\31\f\31\16\31\u00d0"+
+		"\13\31\3\32\3\32\3\32\3\32\7\32\u00d6\n\32\f\32\16\32\u00d9\13\32\3\33"+
+		"\3\33\3\33\7\33\u00de\n\33\f\33\16\33\u00e1\13\33\3\34\3\34\3\34\7\34"+
+		"\u00e6\n\34\f\34\16\34\u00e9\13\34\3\35\3\35\3\35\3\35\5\35\u00ef\n\35"+
+		"\3\35\3\35\3\35\3\35\3\35\5\35\u00f6\n\35\3\36\3\36\3\37\3\37\3 \3 \3"+
+		"!\3!\3\"\3\"\3\"\7\"\u0103\n\"\f\"\16\"\u0106\13\"\3\"\2\2#\2\4\6\b\n"+
+		"\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@B\2\7\3\2\n\f\4"+
+		"\2\16\17\23\23\3\2\20\22\3\2\32\35\3\2 !\2\u00fd\2D\3\2\2\2\4F\3\2\2\2"+
+		"\6H\3\2\2\2\bL\3\2\2\2\nN\3\2\2\2\fZ\3\2\2\2\16\\\3\2\2\2\20`\3\2\2\2"+
+		"\22b\3\2\2\2\24i\3\2\2\2\26k\3\2\2\2\30v\3\2\2\2\32x\3\2\2\2\34z\3\2\2"+
+		"\2\36\u0080\3\2\2\2 \u0082\3\2\2\2\"\u008d\3\2\2\2$\u00a8\3\2\2\2&\u00aa"+
+		"\3\2\2\2(\u00ac\3\2\2\2*\u00b4\3\2\2\2,\u00b6\3\2\2\2.\u00bf\3\2\2\2\60"+
+		"\u00c8\3\2\2\2\62\u00d1\3\2\2\2\64\u00da\3\2\2\2\66\u00e2\3\2\2\28\u00f5"+
+		"\3\2\2\2:\u00f7\3\2\2\2<\u00f9\3\2\2\2>\u00fb\3\2\2\2@\u00fd\3\2\2\2B"+
+		"\u00ff\3\2\2\2DE\7\t\2\2E\3\3\2\2\2FG\t\2\2\2G\5\3\2\2\2HI\5\34\17\2I"+
+		"\7\3\2\2\2JM\5\n\6\2KM\5\26\f\2LJ\3\2\2\2LK\3\2\2\2M\t\3\2\2\2NO\7\b\2"+
+		"\2OP\5\f\7\2PU\5\16\b\2QR\7\36\2\2RT\5\16\b\2SQ\3\2\2\2TW\3\2\2\2US\3"+
+		"\2\2\2UV\3\2\2\2VX\3\2\2\2WU\3\2\2\2XY\7\37\2\2Y\13\3\2\2\2Z[\7\6\2\2"+
+		"[\r\3\2\2\2\\]\5\2\2\2]^\7$\2\2^_\5\20\t\2_\17\3\2\2\2`a\5\22\n\2a\21"+
+		"\3\2\2\2bc\5,\27\2c\23\3\2\2\2dj\5\2\2\2ef\5\2\2\2fg\7$\2\2gh\5\32\16"+
+		"\2hj\3\2\2\2id\3\2\2\2ie\3\2\2\2j\25\3\2\2\2kl\5\f\7\2lq\5\24\13\2mn\7"+
+		"\36\2\2np\5\24\13\2om\3\2\2\2ps\3\2\2\2qo\3\2\2\2qr\3\2\2\2rt\3\2\2\2"+
+		"sq\3\2\2\2tu\7\37\2\2u\27\3\2\2\2vw\5\66\34\2w\31\3\2\2\2xy\5&\24\2y\33"+
+		"\3\2\2\2z{\5\36\20\2{|\5\2\2\2|}\7\24\2\2}~\7\25\2\2~\177\5 \21\2\177"+
+		"\35\3\2\2\2\u0080\u0081\7\6\2\2\u0081\37\3\2\2\2\u0082\u0086\7\26\2\2"+
+		"\u0083\u0085\5\"\22\2\u0084\u0083\3\2\2\2\u0085\u0088\3\2\2\2\u0086\u0084"+
+		"\3\2\2\2\u0086\u0087\3\2\2\2\u0087\u0089\3\2\2\2\u0088\u0086\3\2\2\2\u0089"+
+		"\u008a\7\27\2\2\u008a!\3\2\2\2\u008b\u008e\5\b\5\2\u008c\u008e\5$\23\2"+
+		"\u008d\u008b\3\2\2\2\u008d\u008c\3\2\2\2\u008e#\3\2\2\2\u008f\u0090\5"+
+		"(\25\2\u0090\u0091\7$\2\2\u0091\u0092\5&\24\2\u0092\u0093\7\37\2\2\u0093"+
+		"\u00a9\3\2\2\2\u0094\u0096\5&\24\2\u0095\u0094\3\2\2\2\u0095\u0096\3\2"+
+		"\2\2\u0096\u0097\3\2\2\2\u0097\u00a9\7\37\2\2\u0098\u0099\7\7\2\2\u0099"+
+		"\u009a\5&\24\2\u009a\u009b\7\37\2\2\u009b\u00a9\3\2\2\2\u009c\u009d\7"+
+		"\3\2\2\u009d\u009e\7\24\2\2\u009e\u009f\5\30\r\2\u009f\u00a0\7\25\2\2"+
+		"\u00a0\u00a5\5$\23\2\u00a1\u00a2\7\4\2\2\u00a2\u00a4\5$\23\2\u00a3\u00a1"+
+		"\3\2\2\2\u00a4\u00a7\3\2\2\2\u00a5\u00a3\3\2\2\2\u00a5\u00a6\3\2\2\2\u00a6"+
+		"\u00a9\3\2\2\2\u00a7\u00a5\3\2\2\2\u00a8\u008f\3\2\2\2\u00a8\u0095\3\2"+
+		"\2\2\u00a8\u0098\3\2\2\2\u00a8\u009c\3\2\2\2\u00a9%\3\2\2\2\u00aa\u00ab"+
+		"\5,\27\2\u00ab\'\3\2\2\2\u00ac\u00ad\5\2\2\2\u00ad)\3\2\2\2\u00ae\u00af"+
+		"\7\24\2\2\u00af\u00b0\5&\24\2\u00b0\u00b1\7\25\2\2\u00b1\u00b5\3\2\2\2"+
+		"\u00b2\u00b5\5(\25\2\u00b3\u00b5\5\4\3\2\u00b4\u00ae\3\2\2\2\u00b4\u00b2"+
+		"\3\2\2\2\u00b4\u00b3\3\2\2\2\u00b5+\3\2\2\2\u00b6\u00bc\5.\30\2\u00b7"+
+		"\u00b8\5:\36\2\u00b8\u00b9\5.\30\2\u00b9\u00bb\3\2\2\2\u00ba\u00b7\3\2"+
+		"\2\2\u00bb\u00be\3\2\2\2\u00bc\u00ba\3\2\2\2\u00bc\u00bd\3\2\2\2\u00bd"+
+		"-\3\2\2\2\u00be\u00bc\3\2\2\2\u00bf\u00c5\58\35\2\u00c0\u00c1\5<\37\2"+
+		"\u00c1\u00c2\58\35\2\u00c2\u00c4\3\2\2\2\u00c3\u00c0\3\2\2\2\u00c4\u00c7"+
+		"\3\2\2\2\u00c5\u00c3\3\2\2\2\u00c5\u00c6\3\2\2\2\u00c6/\3\2\2\2\u00c7"+
+		"\u00c5\3\2\2\2\u00c8\u00ce\5,\27\2\u00c9\u00ca\5> \2\u00ca\u00cb\5,\27"+
+		"\2\u00cb\u00cd\3\2\2\2\u00cc\u00c9\3\2\2\2\u00cd\u00d0\3\2\2\2\u00ce\u00cc"+
+		"\3\2\2\2\u00ce\u00cf\3\2\2\2\u00cf\61\3\2\2\2\u00d0\u00ce\3\2\2\2\u00d1"+
+		"\u00d7\5\60\31\2\u00d2\u00d3\5@!\2\u00d3\u00d4\5\62\32\2\u00d4\u00d6\3"+
+		"\2\2\2\u00d5\u00d2\3\2\2\2\u00d6\u00d9\3\2\2\2\u00d7\u00d5\3\2\2\2\u00d7"+
+		"\u00d8\3\2\2\2\u00d8\63\3\2\2\2\u00d9\u00d7\3\2\2\2\u00da\u00df\5\62\32"+
+		"\2\u00db\u00dc\7\"\2\2\u00dc\u00de\5\62\32\2\u00dd\u00db\3\2\2\2\u00de"+
+		"\u00e1\3\2\2\2\u00df\u00dd\3\2\2\2\u00df\u00e0\3\2\2\2\u00e0\65\3\2\2"+
+		"\2\u00e1\u00df\3\2\2\2\u00e2\u00e7\5\64\33\2\u00e3\u00e4\7#\2\2\u00e4"+
+		"\u00e6\5\64\33\2\u00e5\u00e3\3\2\2\2\u00e6\u00e9\3\2\2\2\u00e7\u00e5\3"+
+		"\2\2\2\u00e7\u00e8\3\2\2\2\u00e8\67\3\2\2\2\u00e9\u00e7\3\2\2\2\u00ea"+
+		"\u00f6\5*\26\2\u00eb\u00ec\5\2\2\2\u00ec\u00ee\7\24\2\2\u00ed\u00ef\5"+
+		"B\"\2\u00ee\u00ed\3\2\2\2\u00ee\u00ef\3\2\2\2\u00ef\u00f0\3\2\2\2\u00f0"+
+		"\u00f1\7\25\2\2\u00f1\u00f6\3\2\2\2\u00f2\u00f3\5:\36\2\u00f3\u00f4\5"+
+		"8\35\2\u00f4\u00f6\3\2\2\2\u00f5\u00ea\3\2\2\2\u00f5\u00eb\3\2\2\2\u00f5"+
+		"\u00f2\3\2\2\2\u00f69\3\2\2\2\u00f7\u00f8\t\3\2\2\u00f8;\3\2\2\2\u00f9"+
+		"\u00fa\t\4\2\2\u00fa=\3\2\2\2\u00fb\u00fc\t\5\2\2\u00fc?\3\2\2\2\u00fd"+
+		"\u00fe\t\6\2\2\u00feA\3\2\2\2\u00ff\u0104\5&\24\2\u0100\u0101\7\36\2\2"+
+		"\u0101\u0103\5&\24\2\u0102\u0100\3\2\2\2\u0103\u0106\3\2\2\2\u0104\u0102"+
+		"\3\2\2\2\u0104\u0105\3\2\2\2\u0105C\3\2\2\2\u0106\u0104\3\2\2\2\25LUi"+
+		"q\u0086\u008d\u0095\u00a5\u00a8\u00b4\u00bc\u00c5\u00ce\u00d7\u00df\u00e7"+
+		"\u00ee\u00f5\u0104";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
