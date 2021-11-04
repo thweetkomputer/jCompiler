@@ -1,11 +1,8 @@
 import antlr.ErrorHandler;
 import antlr.ZccBaseVisitor;
 import antlr.ZccParser;
-import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author jerryzhao
@@ -16,8 +13,18 @@ public class Visitor extends ZccBaseVisitor<Void> {
     int index = 1;
     int constExpRes;
     boolean calConstExp = false;
+    boolean declareVar = false;
     Map<String, Integer> constMap = new HashMap<>(128);
     Map<String, Integer> varMap = new HashMap<>(128);
+    Map<String, Function> functionMap = new HashMap<String, Function>(128) {
+        {
+            put("putint", new Function("putint", "void", "int"));
+            put("getint", new Function("getint", "i32", "void"));
+            put("putch", new Function("putch", "void", "i32"));
+            put("getch", new Function("getch", "i32", "void"));
+        }
+    };
+    Deque<List<Integer>> paramsStack = new LinkedList<>();
 
     @Override
     public Void visitCompUnit(ZccParser.CompUnitContext ctx) {
@@ -109,6 +116,17 @@ public class Visitor extends ZccBaseVisitor<Void> {
             }
             constExpRes = res;
         }
+        int vn = index;
+        visit(ctx.mulExp(0));
+        for (int i = 0; i < ctx.unaryOp().size(); i++) {
+            visit(ctx.mulExp(i + 1));
+            if (ctx.unaryOp().get(i).ADD() != null) {
+                printf("\t%%%d = add i32 %%%d, %%%d\n", index, vn, index - 1);
+            } else {
+                printf("\t%%%d = sub i32 %%%d, %%%d\n", index, vn, index - 1);
+            }
+            vn = index++;
+        }
         return null;
     }
 
@@ -130,6 +148,19 @@ public class Visitor extends ZccBaseVisitor<Void> {
             }
             constExpRes = res;
         }
+        int vn = index;
+        visit(ctx.unaryExp(0));
+        for (int i = 0; i < ctx.pUnayOp().size(); i++) {
+            visit(ctx.unaryExp(i + 1));
+            if (ctx.pUnayOp().get(i).MUL() != null) {
+                printf("\t%%%d = mul i32 %%%d, %%%d\n", index, vn, index - 1);
+            } else if (ctx.pUnayOp().get(i).DIV() != null) {
+                printf("\t%%%d = sdiv i32 %%%d, %%%d\n", index, vn, index - 1);
+            } else {
+                printf("\t%%%d = srem i32 %%%d, %%%d\n", index, vn, index - 1);
+            }
+            vn = index++;
+        }
         return null;
     }
 
@@ -150,27 +181,67 @@ public class Visitor extends ZccBaseVisitor<Void> {
                 constExpRes = res;
             }
         }
+        if (ctx.primaryExp() != null) {
+            visit(ctx.primaryExp());
+        } else if (ctx.unaryOp() != null) {
+            visit(ctx.unaryExp());
+            if (ctx.unaryOp().SUB() != null) {
+                printf("\t%%%d = sub i32 0, %%%d\n", index, index - 1);
+                index++;
+            }
+        } else {
+
+            paramsStack.push(new ArrayList<>());
+            String funcName = ctx.ident().IDENT().toString();
+            Function function = functionMap.get(funcName);
+            if (function == null) {
+                ErrorHandler.err("cannot found %s()", funcName);
+            }
+            if (ctx.funcRParams() != null) {
+                visit(ctx.funcRParams());
+            }
+            List<Integer> list = paramsStack.pop();
+            assert function != null;
+            printf("\t%%%d = call %s @%s(", index++, function.returnType, function.name);
+            for (int i = 0; i < list.size(); i++) {
+                if (i != 0) {
+                    print(", ");
+                }
+                printf("%s %%%d", function.parameterType, list.get(i));
+            }
+            printf(")\n");
+
+
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitFuncRParams(ZccParser.FuncRParamsContext ctx) {
+        for (ZccParser.ExpContext expContext : ctx.exp()) {
+            visit(expContext);
+            assert paramsStack.peek() != null;
+            paramsStack.peek().add(index - 1);
+        }
         return null;
     }
 
     @Override
     public Void visitPrimaryExp(ZccParser.PrimaryExpContext ctx) {
-        if (calConstExp) {
-            if (ctx.lVal() != null) {
-                visit(ctx.lVal());
-            } else if (ctx.number() != null) {
-                visit(ctx.number());
-            } else if (ctx.children.size() == 3) {
-                visit(ctx.exp());
-            }
+        if (ctx.lVal() != null) {
+            visit(ctx.lVal());
+        } else if (ctx.number() != null) {
+            visit(ctx.number());
+        } else if (ctx.children.size() == 3) {
+            visit(ctx.exp());
         }
         return null;
     }
 
     @Override
     public Void visitLVal(ZccParser.LValContext ctx) {
+        String name = ctx.ident().IDENT().toString();
         if (calConstExp) {
-            String name = ctx.ident().IDENT().toString();
             if (findInVarMap(name)) {
                 ErrorHandler.err("cannot use variable to declare constant");
             }
@@ -179,6 +250,14 @@ public class Visitor extends ZccBaseVisitor<Void> {
             }
             constExpRes = constMap.get(name);
         }
+        if (findInVarMap(name)) {
+            printf("\t%%%d = load i32, i32* %%%d\n", index++, varMap.get(name));
+        } else if (findInConstMap(name)) {
+            printf("\t%%%d = add i32 0, %d\n", index++, constMap.get(name));
+        } else {
+            ErrorHandler.err("cannot find constant %s", name);
+        }
+
         return null;
     }
 
@@ -204,6 +283,8 @@ public class Visitor extends ZccBaseVisitor<Void> {
         }
         if (calConstExp) {
             constExpRes = val;
+        } else {
+            printf("\t%%%d = add i32 0, %d\n", index++, val);
         }
         return null;
     }
@@ -222,8 +303,36 @@ public class Visitor extends ZccBaseVisitor<Void> {
         if (findInConstMap(name) || findInVarMap(name)) {
             ErrorHandler.err("variable already declare");
         }
-        // TODO
+        switch (ctx.children.size()) {
+            case 1:
+                declareVar(name);
+                break;
+            case 3:
+                int vn = index;
+                declareVar(name);
+                visit(ctx.initVal());
+                printf("\tstore i32 %%%d, i32* %%%d\n", index - 1, vn);
+                break;
+            default:
+        }
         return null;
+    }
+
+    @Override
+    public Void visitInitVal(ZccParser.InitValContext ctx) {
+        visit(ctx.exp());
+        return null;
+    }
+
+    @Override
+    public Void visitExp(ZccParser.ExpContext ctx) {
+        visit(ctx.addExp());
+        return null;
+    }
+
+    void declareVar(String name) {
+        printf("\t%%%d = alloca i32\n", index);
+        varMap.put(name, index++);
     }
 
     void print(String msg) {
@@ -240,5 +349,20 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     boolean findInVarMap(String name) {
         return varMap.containsKey(name);
+    }
+}
+
+class Function {
+    String name;
+    String returnType;
+    String parameterType;
+
+    public Function() {
+    }
+
+    public Function(String name, String returnType, String parameterType) {
+        this.name = name;
+        this.returnType = returnType;
+        this.parameterType = parameterType;
     }
 }

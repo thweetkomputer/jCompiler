@@ -24,6 +24,7 @@ public class Main {
         parser.addErrorListener(new ExitErrorListener());
 
         ParseTree tree = parser.compUnit();
+        System.out.println(tree.toStringTree(parser));
         Visitor visitor = new Visitor();
         visitor.visit(tree);
     }
