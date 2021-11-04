@@ -19,13 +19,13 @@ import java.nio.charset.StandardCharsets;
 public class Main {
     public static void main(String[] args) throws IOException {
         String content = getFileContent(new FileInputStream(args[0]), StandardCharsets.UTF_8.toString());
-        System.out.println(content);
         CharStream inputStream = CharStreams.fromString(content);
         ZccLexer lexer = new ZccLexer(inputStream);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         ZccParser parser = new ZccParser(tokenStream);
         ParseTree tree = parser.compUnit();
-        System.out.println(tree.toStringTree(parser));
+        Visitor visitor = new Visitor();
+        visitor.visit(tree);
     }
 
     public static String getFileContent(FileInputStream fis, String encoding) throws IOException {
