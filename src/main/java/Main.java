@@ -2,6 +2,7 @@
 
 import antlr.ZccLexer;
 import antlr.ZccParser;
+import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -23,6 +24,8 @@ public class Main {
         ZccLexer lexer = new ZccLexer(inputStream);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         ZccParser parser = new ZccParser(tokenStream);
+        parser.addErrorListener(new ExitErrorListener());
+
         ParseTree tree = parser.compUnit();
         Visitor visitor = new Visitor();
         visitor.visit(tree);
