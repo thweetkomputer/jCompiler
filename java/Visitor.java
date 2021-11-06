@@ -1,4 +1,6 @@
 import antlr.ErrorHandler;
+import antlr.ZccBaseVisitor;
+import antlr.ZccParser;
 
 import java.util.*;
 
@@ -7,11 +9,14 @@ import java.util.*;
  * @date 2021/11/4
  */
 public class Visitor extends ZccBaseVisitor<Void> {
+    boolean debug = false;
     int index = 1;
     int constExpRes;
     boolean calConstExp = false;
     Map<String, Integer> constMap = new HashMap<>(128);
     Map<String, Integer> varMap = new HashMap<>(128);
+    Map<Object, Integer> blockMap = new HashMap<>(128);
+    Set<Object> blockSet = new HashSet<>(128);
     Map<String, Function> functionMap = new HashMap<String, Function>(128) {
         {
             put("putint", new Function("putint", "void", "i32"));
@@ -37,11 +42,15 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     @Override
     public Void visitBlock(ZccParser.BlockContext ctx) {
-        print("{\n");
+        if (!blockSet.contains(ctx)) {
+            print("{\n");
+        }
         for (ZccParser.BlockItemContext blockItemContext : ctx.blockItem()) {
             visit(blockItemContext);
         }
-        print("}");
+        if (!blockSet.contains(ctx)) {
+            print("}");
+        }
         return null;
     }
 
@@ -60,7 +69,14 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     @Override
     public Void visitStmt(ZccParser.StmtContext ctx) {
+        if (blockMap.containsKey(ctx)) {
+            printf("\n\n%d:\n", blockMap.get(ctx));
+        }
         if (ctx.children.size() == 1) {
+            if (blockMap.containsKey(ctx)) {
+                blockSet.add(ctx.block());
+            }
+            visit(ctx.block());
             return null;
         }
         if (ctx.children.size() == 2) {
@@ -69,18 +85,108 @@ public class Visitor extends ZccBaseVisitor<Void> {
         }
         if (ctx.children.size() == 3) {
             visit(ctx.exp());
-            printf("\tret i32 %%%d\n", index-1);
+            printf("\tret i32 %%%d\n", index - 1);
             return null;
         }
-        String name = ctx.lVal().ident().IDENT().toString();
-        if (findInConstMap(name)) {
-            ErrorHandler.err("cannot modify constant value");
+        if (ctx.children.size() == 4) {
+            String name = ctx.lVal().ident().IDENT().toString();
+            if (findInConstMap(name)) {
+                ErrorHandler.err("cannot modify constant value");
+            }
+            if (!findInVarMap(name)) {
+                ErrorHandler.err("cannot find variable %s", name);
+            }
+            visit(ctx.exp());
+            printf("\tstore i32 %%%d, i32* %%%d\n", index - 1, varMap.get(name));
+            return null;
         }
-        if (!findInVarMap(name)){
-            ErrorHandler.err("cannot find variable %s", name);
+        if (ctx.children.size() == 5) {
+            visit(ctx.cond());
+            int cn = index - 1;
+            blockMap.put(ctx.stmt(0), index++);
+            int ncn = index++;
+            printf("\tbr i1 %%%d, label %%%d, %%%d\n", cn, blockMap.get(ctx.stmt(0)), ncn);
+            visit(ctx.stmt(0));
+            printf("\n\n%d:\n", ncn);
+            return null;
         }
-        visit(ctx.exp());
-        printf("\tstore i32 %%%d, i32* %%%d\n", index - 1, varMap.get(name));
+        if (ctx.children.size() == 7) {
+            visit(ctx.cond());
+            int cn = index - 1;
+            blockMap.put(ctx.stmt(0), index++);
+            blockMap.put(ctx.stmt(1), index++);
+            int ncn = index++;
+            printf("\tbr i1 %%%d, label %%%d, %%%d\n", cn, blockMap.get(ctx.stmt(0)), blockMap.get(ctx.stmt(1)));
+            visit(ctx.stmt(0));
+            visit(ctx.stmt(1));
+            printf("\n\n%d:\n", ncn);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitCond(ZccParser.CondContext ctx) {
+        visit(ctx.lOrExp());
+        return null;
+    }
+
+    @Override
+    public Void visitLOrExp(ZccParser.LOrExpContext ctx) {
+        visit(ctx.lAndExp(0));
+        int vn = index - 1;
+        for (int i = 0; i < ctx.OR().size(); i++) {
+            visit(ctx.lAndExp(i + 1));
+            printf("\t%%%d = or i1 %%%d, %%%d\n", index, vn, index - 1);
+            vn = index++;
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitLAndExp(ZccParser.LAndExpContext ctx) {
+        visit(ctx.eqExp(0));
+        int vn = index - 1;
+        for (int i = 0; i < ctx.AND().size(); i++) {
+            visit(ctx.eqExp(i + 1));
+            printf("\t%%%d = and i1 %%%d, %%%d\n", index, vn, index - 1);
+            vn = index++;
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitEqExp(ZccParser.EqExpContext ctx) {
+        visit(ctx.relExp(0));
+        int vn = index - 1;
+        for (int i = 0; i < ctx.eOp().size(); i++) {
+            visit(ctx.relExp(i + 1));
+            if (ctx.eOp().get(i).EQ() != null) {
+                printf("\t%%%d = icmp eq %%%d, %%%d\n", index, vn, index - 1);
+            } else if (ctx.eOp().get(i).NE() != null) {
+                printf("\t%%%d = icmp ne %%%d, %%%d\n", index, vn, index - 1);
+            }
+            vn = index++;
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitRelExp(ZccParser.RelExpContext ctx) {
+        visit(ctx.addExp(0));
+        int vn = index - 1;
+        for (int i = 0; i < ctx.cmpOp().size(); i++) {
+            visit(ctx.addExp(i + 1));
+            if (ctx.cmpOp().get(i).GE() != null) {
+                printf("\t%%%d = icmp sge %%%d, %%%d\n", index, vn, index - 1);
+            } else if (ctx.cmpOp().get(i).LE() != null) {
+                printf("\t%%%d = icmp sle %%%d, %%%d\n", index, vn, index - 1);
+            } else if (ctx.cmpOp().get(i).GT() != null) {
+                printf("\t%%%d = icmp sgt %%%d, %%%d\n", index, vn, index - 1);
+            } else if (ctx.cmpOp().get(i).LT() != null) {
+                printf("\t%%%d = icmp slt %%%d, %%%d\n", index, vn, index - 1);
+            }
+            vn = index++;
+        }
         return null;
     }
 
@@ -140,7 +246,7 @@ public class Visitor extends ZccBaseVisitor<Void> {
             visit(ctx.mulExp(i + 1));
             if (ctx.unaryOp().get(i).ADD() != null) {
                 printf("\t%%%d = add i32 %%%d, %%%d\n", index, vn, index - 1);
-            } else {
+            } else if (ctx.unaryOp().get(i).SUB() != null) {
                 printf("\t%%%d = sub i32 %%%d, %%%d\n", index, vn, index - 1);
             }
             vn = index++;
@@ -207,9 +313,13 @@ public class Visitor extends ZccBaseVisitor<Void> {
             if (ctx.unaryOp().SUB() != null) {
                 printf("\t%%%d = sub i32 0, %%%d\n", index, index - 1);
                 index++;
+            } else if (ctx.unaryOp().NOT() != null) {
+                printf("\t%%%d = icmp i32 0, %%%d\n", index, index - 1);
+                index++;
+                printf("\t%%%d = zext i32 %%%d to i1\n", index, index - 1);
+                index++;
             }
         } else {
-
             paramsStack.push(new ArrayList<>());
             String funcName = ctx.ident().IDENT().toString();
             Function function = functionMap.get(funcName);
@@ -353,6 +463,7 @@ public class Visitor extends ZccBaseVisitor<Void> {
         return null;
     }
 
+
     void declareVar(String name) {
         printf("\t%%%d = alloca i32\n", index);
         varMap.put(name, index++);
@@ -364,6 +475,20 @@ public class Visitor extends ZccBaseVisitor<Void> {
 
     void printf(String msg, Object... params) {
         System.out.printf(msg, params);
+    }
+
+    void debug(String msg, Object... params) {
+        if (!debug) {
+            return;
+        }
+        System.err.printf(msg, params);
+    }
+
+    void debug(String msg) {
+        if (!debug) {
+            return;
+        }
+        System.err.print(msg);
     }
 
     boolean findInConstMap(String name) {

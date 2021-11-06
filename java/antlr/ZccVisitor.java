@@ -76,6 +76,12 @@ public interface ZccVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVarDecl(ZccParser.VarDeclContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ZccParser#cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCond(ZccParser.CondContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ZccParser#initVal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -142,6 +148,30 @@ public interface ZccVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMulExp(ZccParser.MulExpContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ZccParser#relExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRelExp(ZccParser.RelExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZccParser#eqExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEqExp(ZccParser.EqExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZccParser#lAndExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLAndExp(ZccParser.LAndExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZccParser#lOrExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLOrExp(ZccParser.LOrExpContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ZccParser#unaryExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -159,6 +189,18 @@ public interface ZccVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPUnayOp(ZccParser.PUnayOpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZccParser#cmpOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCmpOp(ZccParser.CmpOpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZccParser#eOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEOp(ZccParser.EOpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZccParser#funcRParams}.
 	 * @param ctx the parse tree
