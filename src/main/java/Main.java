@@ -30,7 +30,6 @@ public class Main {
         System.out.println("declare void @putch(i32)");
         Visitor visitor = new Visitor();
         visitor.visit(tree);
-//        System.out.println(tree.toStringTree(parser));
     }
 
     public static String getFileContent(FileInputStream fis, String encoding) throws IOException {
