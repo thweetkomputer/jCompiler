@@ -10,6 +10,8 @@ int main (int argc, char *argv[])
       putchar(ccc);
       continue;
     }
+    if (ccc == '\t' || ccc == '\r' || ccc == '\n')
+      continue;
     putchar(ccc);
   }
   return 0;
