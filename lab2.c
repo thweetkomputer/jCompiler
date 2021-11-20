@@ -10,8 +10,6 @@ int main (int argc, char *argv[])
       putchar(ccc);
       continue;
     }
-    if (is_empty(ccc))
-      continue;
     putchar(ccc);
   }
   return 0;
