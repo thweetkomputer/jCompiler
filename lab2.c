@@ -12,6 +12,7 @@ int main (int argc, char *argv[])
     }
     if (ccc == '\r' || ccc == '\n') {
       printf (" $\\n$ ");
+      continue;
     }
     putchar(ccc);
   }
