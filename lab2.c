@@ -6,12 +6,13 @@ int main (int argc, char *argv[])
 {
   int ccc;
   while ((ccc = getchar())!=EOF){
-    if (ccc == ' ') {
+    if (ccc == ' ' || ccc == '\t') {
       putchar(ccc);
       continue;
     }
-    if (ccc == '\t' || ccc == '\r' || ccc == '\n')
-      continue;
+    if (ccc == '\r' || ccc == '\n') {
+      printf (" $\\n$ ");
+    }
     putchar(ccc);
   }
   return 0;
