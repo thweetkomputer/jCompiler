@@ -3,5 +3,5 @@
 image = { source = "dockerfile", path = ".", tag = "lab2" }
 
 run = [
-  "if [ -f $stdin ]; then cat $stdin; else echo; fi |  echo",
+  "cat out.ll > $ir",
 ]
