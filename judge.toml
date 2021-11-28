@@ -1,7 +1,7 @@
-[jobs.lab8]
+[jobs.mdarray]
 
 image = { source = "dockerfile", path = ".", tag = "lab2" }
 
 run = [
-  "cat out.ll > $ir",
+  "./lab2 < $input",
 ]
