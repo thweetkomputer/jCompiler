@@ -1,4 +1,4 @@
-FROM gcc:9
-COPY test.c .
-RUN gcc test.c -o test
-RUN chmod +x test
+FROM openjdk:8
+WORKDIR /app/
+COPY java ./
+RUN javac -cp antlr-4.9.2-complete.jar:antlr:.: Main.java

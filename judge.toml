@@ -1,7 +1,7 @@
-[jobs.test-submit]
+[jobs.mdarray]
 
-image = { source = "dockerfile", path = ".", tag = "test-submit" }
+image = { source = "dockerfile", path = ".", tag = "lab8" }
 
 run = [
-  "./test < $input",
+  "./tool < $input > middle.c; java -cp antlr-4.9.2-complete.jar:antlr:.: Main middle.c > $ir",
 ]
